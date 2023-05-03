@@ -1,14 +1,14 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
-const Settings = () => {
+const Scanner = () => {
   return (
     <View>
-      <Text>Settings</Text>
+      <Text>Scanner</Text>
     </View>
   );
 };
 
-export default Settings;
+export default Scanner;
 
 const styles = StyleSheet.create({});

@@ -1,0 +1,14 @@
+[
+    {
+        "productName":"Rio Chocolate Cookies",
+        
+        "productPrice":"$2.00",
+        "productID":1
+        
+    }
+    {
+        "productName":"Sunshine Snacks Stixx",
+        "productPrice":"$4.00",
+        "productID":2
+    }
+]

@@ -1,15 +1,21 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "./screens/Home";
-import Details from "./screens/Details";
-import { NavigationContainer } from "@react-navigation/native";
-import Navbar from "./components/Navbar";
+import 'react-native-gesture-handler';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {View, Text} from 'react-native';
+import React from 'react';
+import Login from './screens/Login';
+import Navbar from './components/Navbar';
+import {NavigationContainer} from '@react-navigation/native';
+import AllProducts from './screens/AllProducts';
 export default function App() {
   const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Navbar">
-        <Stack.Screen name="Home" component={Navbar} />
-        <Stack.Screen name="Details" component={Details} />
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Navbar" component={Navbar} />
+        <Stack.Screen name="AllProducts" component={AllProducts} />
       </Stack.Navigator>
     </NavigationContainer>
   );

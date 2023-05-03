@@ -1,7 +1,7 @@
 export const colors = {
-  red: "#ff0000",
-  black: "#000000",
-  white: "#ffffff",
-  lightYellow: "#faf2d7",
-  slateBlack: "#242629",
+  purple: '#7b00ff',
+
+  white: '#e4ebe5',
+  red: '#e91e63',
+  blue: '#035efc',
 };
