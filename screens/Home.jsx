@@ -6,24 +6,53 @@ import {
   ScrollView,
   Modal,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {colors} from '../constants/colors';
-const Home = ({navigation}) => {
+const Home = ({navigation, user}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [accounts, setAccounts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setError] = useState('');
+  const [products, setProducts] = useState([]);
+
+  const API_URL = 'https://producttracker-api-production.up.railway.app';
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/products`)
+      .then(res => res.json())
+      .then(
+        result => {
+          setIsLoading(false), setProducts(result);
+        },
+        error => {
+          setIsLoading(false), setError(error);
+        },
+      );
+  }, []);
+
+  const getProducts = () => {
+    if (isLoading == true) {
+      return <ActivityIndicator size={'large'} color={'blue'} />;
+    } else {
+      console.log(products);
+      return <Text style={homeStyles.apiText}>API Call Was Successful</Text>;
+    }
+  };
+
   return (
     <ScrollView>
       <View style={homeStyles.topNav}>
         <Text style={homeStyles.helloText}>Hello User!</Text>
         <Modal visible={modalVisible}>
-          <Text>Accounts</Text>
-          <Text>No Accounts To Display</Text>
-          <Pressable>
-            <Text>Add Account</Text>
+          <Text style={modalStyles.modalTitle}>Accounts</Text>
+          <Text style={modalStyles.noAccountText}>No Accounts To Display</Text>
+          <Pressable style={modalStyles.addAccountButton}>
+            <Text style={modalStyles.addAccountButtonText}>Add Account</Text>
           </Pressable>
           <FlatList
             data={accounts}
@@ -31,8 +60,10 @@ const Home = ({navigation}) => {
               return <Text>{item}</Text>;
             }}
           />
-          <Pressable onPress={() => setModalVisible(false)}>
-            <Text>Close</Text>
+          <Pressable
+            style={modalStyles.closeButton}
+            onPress={() => setModalVisible(false)}>
+            <Text style={modalStyles.closeButtonText}>Close</Text>
           </Pressable>
         </Modal>
         <Pressable onPress={() => setModalVisible(true)}>
@@ -45,17 +76,7 @@ const Home = ({navigation}) => {
       </View>
       <View>
         <Text style={homeStyles.productText}>Products</Text>
-        <FlatList
-          keyExtractor={cafeItem => cafeItem.productID}
-          renderItem={cafeItem => {
-            <View style={homeStyles.productContainer}>
-              <Text>Product</Text>
-              <Pressable>
-                <MaterialIcons name="details" color={colors.purple} />
-              </Pressable>
-            </View>;
-          }}
-        />
+        <View>{getProducts()}</View>
         <Pressable style={homeStyles.viewProductsButton}>
           <Text style={homeStyles.viewProductsButtonText}>
             View All Products
@@ -97,5 +118,43 @@ const homeStyles = StyleSheet.create({
   },
   productContainer: {
     flexDirection: 'row',
+  },
+  apiText: {
+    textAlign: 'center',
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  modalTitle: {
+    fontSize: 30,
+    textAlign: 'center',
+  },
+  closeButton: {
+    backgroundColor: colors.red,
+    width: 120,
+    alignSelf: 'center',
+    marginBottom: 12,
+    borderRadius: 8,
+    padding: 10,
+  },
+  closeButtonText: {
+    textAlign: 'center',
+    color: colors.white,
+  },
+  addAccountButton: {
+    backgroundColor: colors.purple,
+    width: 120,
+    alignSelf: 'center',
+    marginBottom: 12,
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 15,
+  },
+  addAccountButtonText: {
+    textAlign: 'center',
+    color: colors.white,
+  },
+  noAccountText: {
+    textAlign: 'center',
   },
 });

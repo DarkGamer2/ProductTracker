@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Scanner from '../screens/Scanner';
 import {colors} from '../constants/colors';
 
-const Navbar = () => {
+const Navbar = ({user}) => {
   const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
@@ -23,16 +23,19 @@ const Navbar = () => {
         component={Home}
         options={{
           tabBarLabel: 'Home',
+          tabBarLabelStyle: navStyles.label,
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }}
+        user={user}
       />
       <Tab.Screen
         name="Add Product"
         component={AddProduct}
         options={{
           tabBarLabel: 'Add Product',
+          tabBarLabelStyle: navStyles.label,
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name="add-circle" color={color} size={size} />
           ),
@@ -44,6 +47,7 @@ const Navbar = () => {
         component={Scanner}
         options={{
           tabBarLabel: 'Scanner',
+          tabBarLabelStyle: navStyles.label,
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="qrcode" color={color} size={size} />
           ),
@@ -54,6 +58,7 @@ const Navbar = () => {
         component={Settings}
         options={{
           tabBarLabel: 'Settings',
+          tabBarLabelStyle: navStyles.label,
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name="settings" color={color} size={size} />
           ),
@@ -65,4 +70,9 @@ const Navbar = () => {
 
 export default Navbar;
 
-const styles = StyleSheet.create({});
+const navStyles = StyleSheet.create({
+  label: {
+    fontFamily: 'Lato-Italic',
+    fontSize: 12,
+  },
+});

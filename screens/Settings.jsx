@@ -1,14 +1,37 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-
+import {StyleSheet, Text, View, Switch, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import {colors} from '../constants/colors';
 const Settings = () => {
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const toggleSwitch = () =>
+    setDarkModeEnabled(previousState => !previousState);
   return (
     <View>
-      <Text>Settings</Text>
+      <Text style={settingStyles.screenTitle}>Settings</Text>
+      <ScrollView>
+        <View style={settingStyles.itemRow}>
+          <Text>Dark Mode</Text>
+          <Switch
+            trackColor={{false: '#767577', true: `${colors.purple}`}}
+            thumbColor={darkModeEnabled ? `${colors.white}` : '#f4f3f4'}
+            onValueChange={toggleSwitch}
+            value={darkModeEnabled}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
 export default Settings;
 
-const styles = StyleSheet.create({});
+const settingStyles = StyleSheet.create({
+  screenTitle: {
+    textAlign: 'center',
+    fontSize: 15,
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+});

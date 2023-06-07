@@ -5,25 +5,72 @@ import {
   ScrollView,
   Pressable,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
+import {useState} from 'react';
 import {colors} from '../constants/colors';
 
 const AddProduct = () => {
+  const API_URL = 'https://producttracker-api-production.up.railway.app';
+
+  const [productName, setProductName] = useState('');
+  const [productDescription, setProductDescription] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [buttonText, setButtonText] = useState('Add Product');
+  const [buttonColor, setButtonColor] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const Product = {productName, productDescription, productPrice};
+  const handleSubmit = () => {
+    fetch(
+      `${API_URL}/api/products/addproduct`,
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Product),
+      },
+      setButtonText(
+        <Text>
+          {' '}
+          <ActivityIndicator size={'small'} color={colors.white} /> Adding
+          Product...
+        </Text>,
+      ),
+      setButtonColor('#00c438'),
+    );
+  };
   return (
     <ScrollView>
       <View>
-        <Text>Add Product</Text>
+        <Text style={formStyles.formTitle}>Add Product</Text>
       </View>
       <View>
         <Text style={formStyles.formTitle}>Product Name</Text>
-        <TextInput style={formStyles.textInput} />
+        <TextInput
+          style={formStyles.textInput}
+          onChangeText={newProductName => setProductName(newProductName)}
+          defaultValue={productName}
+        />
         <Text style={formStyles.formTitle}>Product Description</Text>
-        <TextInput style={formStyles.textInput} />
+        <TextInput
+          style={formStyles.textInput}
+          onChangeText={newProductDescription =>
+            setProductDescription(newProductDescription)
+          }
+          defaultValue={productDescription}
+        />
         <Text style={formStyles.formTitle}>Product Price</Text>
-        <TextInput style={formStyles.textInput} />
-        <Pressable style={formStyles.addProductButton}>
-          <Text style={formStyles.addButtonText}>Add Product</Text>
+        <TextInput
+          style={formStyles.textInput}
+          onChangeText={newProductPrice => setProductPrice(newProductPrice)}
+          defaultValue={productPrice}
+        />
+        <Pressable style={formStyles.addProductButton} onPress={handleSubmit}>
+          <Text style={formStyles.addButtonText}>{buttonText}</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -41,6 +88,7 @@ const formStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     color: colors.white,
+    fontFamily: 'Roboto-Regular',
   },
   formTitle: {
     textAlign: 'center',
@@ -48,5 +96,13 @@ const formStyles = StyleSheet.create({
   },
   addProductButton: {
     backgroundColor: colors.purple,
+    padding: 10,
+    width: 120,
+    alignSelf: 'center',
+    borderRadius: 8,
+  },
+  screenTitle: {
+    textAlign: 'center',
+    fontSize: 10,
   },
 });
