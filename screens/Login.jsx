@@ -16,6 +16,7 @@ const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [buttonText, setButtonText] = useState('Login');
+  const [registerButtonText, setRegisterButtonText] = useState('Register');
   const handleLogin = () => {
     navigation.navigate('Navbar'),
       setButtonText(
@@ -24,6 +25,10 @@ const Login = ({navigation}) => {
         </Text>,
       );
   };
+
+  const navigateToRegisterPage=()=>{
+    navigation.navigate('Register');
+  }
   return (
     <ScrollView>
       <View>
@@ -47,6 +52,11 @@ const Login = ({navigation}) => {
       <View style={loginStyles.buttonContainer}>
         <Pressable style={loginStyles.loginButton} onPress={handleLogin}>
           <Text style={loginStyles.loginButtonText}>{buttonText}</Text>
+        </Pressable>
+      </View>
+      <View style={loginStyles.buttonContainer}>
+        <Pressable style={loginStyles.registerButton} onPress={navigateToRegisterPage}>
+          <Text style={loginStyles.registerButtonText}>{registerButtonText}</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -83,6 +93,21 @@ const loginStyles = StyleSheet.create({
     width: 50,
     textAlign: 'center',
     alignSelf: 'center',
+  },
+  registerButton: {
+    backgroundColor: colors.purple,
+    padding: 10,
+    width: 160,
+    alignSelf: 'center',
+    borderRadius: 8,
+    marginTop: 25,
+  },
+  registerButtonText: {
+    textAlign: 'center',
+    fontSize: 15,
+    color: colors.white,
+    fontFamily: 'BebasNeue-Regular',
+    letterSpacing:3
   },
   inputField: {
     margin: 'auto',
