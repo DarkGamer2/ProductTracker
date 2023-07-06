@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Scanner from '../screens/Scanner';
 import {colors} from '../constants/colors';
-
+import { fonts } from '../constants/fonts';
 const Navbar = ({user}) => {
   const Tab = createBottomTabNavigator();
   return (
@@ -72,7 +72,7 @@ export default Navbar;
 
 const navStyles = StyleSheet.create({
   label: {
-    fontFamily: 'Lato-Italic',
+    fontFamily:`Lato-Italic`,
     fontSize: 12,
   },
 });

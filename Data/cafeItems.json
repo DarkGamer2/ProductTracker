@@ -1,13 +1,14 @@
 [
     {
         "productName":"Rio Chocolate Cookies",
-        
+        "productImage":"https://i.redd.it/ot7f7hmpssa51.jpg",
         "productPrice":"$2.00",
         "productID":1
         
     }
     {
         "productName":"Sunshine Snacks Stixx",
+        "productImage":"*",
         "productPrice":"$4.00",
         "productID":2
     }

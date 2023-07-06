@@ -5,11 +5,13 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Image
 } from 'react-native';
 import {useState} from 'react';
 import React from 'react';
 import {Pressable} from 'react-native';
 import {colors} from '../constants/colors';
+import PTLogo from "../assets/images/ProductTrackerIcon.png"
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -25,6 +27,7 @@ const Login = ({navigation}) => {
   return (
     <ScrollView>
       <View>
+        <Image style={loginStyles.PTLogoStyle} source={PTLogo}/>
         <Text style={loginStyles.appTitle}>Product Tracker</Text>
       </View>
       <View>
@@ -54,11 +57,10 @@ export default Login;
 
 const loginStyles = StyleSheet.create({
   appTitle: {
-    fontSize: 30,
+    fontSize: 40,
     textAlign: 'center',
-    marginTop: 15,
-    fontStyle: 'italic',
-    fontWeight: 'bold',
+    marginTop: 35,
+    fontFamily:'BebasNeue-Regular',
     color: colors.purple,
   },
 
@@ -74,7 +76,8 @@ const loginStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     color: colors.white,
-    fontFamily: 'Roboto-Regular',
+    fontFamily: 'BebasNeue-Regular',
+    letterSpacing:3
   },
   buttonContainer: {
     width: 50,
@@ -86,13 +89,23 @@ const loginStyles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: colors.smokeWhite,
     width: 150,
-    marginBottom: 10,
+    marginBottom: 20,
     borderRadius: 8,
     padding: 8,
   },
   label: {
     textAlign: 'center',
-    margin: 20,
+    margin: 32,
     fontSize: 16,
+    fontFamily:"Lato-Italic",
   },
+  PTLogoStyle: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center',
+    marginTop: 35,
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+  }
 });

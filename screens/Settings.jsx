@@ -28,7 +28,10 @@ export default Settings;
 const settingStyles = StyleSheet.create({
   screenTitle: {
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 35,
+    color:colors.purple,
+    fontFamily:"BebasNeue-Regular",
+    margin:20
   },
   itemRow: {
     flexDirection: 'row',

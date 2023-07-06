@@ -5,4 +5,5 @@ export const colors = {
   red: '#e91e63',
   blue: '#035efc',
   smokeWhite: '#cfcdcc',
+  black:"#000000"
 };

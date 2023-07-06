@@ -46,7 +46,7 @@ const AddProduct = () => {
   return (
     <ScrollView>
       <View>
-        <Text style={formStyles.formTitle}>Add Product</Text>
+        <Text style={formStyles.screenTitle}>Add Product</Text>
       </View>
       <View>
         <Text style={formStyles.formTitle}>Product Name</Text>
@@ -83,16 +83,26 @@ const formStyles = StyleSheet.create({
   textInput: {
     margin: 'auto',
     alignSelf: 'center',
+    backgroundColor: colors.smokeWhite,
+    width: 150,
+    marginBottom: 10,
+    borderRadius: 8,
+    padding: 8,
   },
   addButtonText: {
     textAlign: 'center',
     fontSize: 15,
     color: colors.white,
-    fontFamily: 'Roboto-Regular',
+    fontFamily: 'BebasNeue-Regular',
+    letterSpacing:1
   },
   formTitle: {
     textAlign: 'center',
     fontSize: 20,
+    fontFamily:'Lato-Italic',
+    marginBottom:30,
+    color:colors.black
+    
   },
   addProductButton: {
     backgroundColor: colors.purple,
@@ -100,9 +110,13 @@ const formStyles = StyleSheet.create({
     width: 120,
     alignSelf: 'center',
     borderRadius: 8,
+    marginTop:40
   },
   screenTitle: {
     textAlign: 'center',
-    fontSize: 10,
+    fontSize: 35,
+    fontFamily:"BebasNeue-Regular",
+    margin:20,
+    color:colors.purple,
   },
 });
