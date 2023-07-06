@@ -100,8 +100,8 @@ const formStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontFamily:'Lato-Italic',
-    marginBottom:30,
-    color:colors.black
+    margin:30,
+    color:colors.darkGrayAlt2
     
   },
   addProductButton: {

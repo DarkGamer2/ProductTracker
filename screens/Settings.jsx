@@ -10,7 +10,7 @@ const Settings = () => {
       <Text style={settingStyles.screenTitle}>Settings</Text>
       <ScrollView>
         <View style={settingStyles.itemRow}>
-          <Text>Dark Mode</Text>
+          <Text style={settingStyles.settingTitle}>Dark Mode</Text>
           <Switch
             trackColor={{false: '#767577', true: `${colors.purple}`}}
             thumbColor={darkModeEnabled ? `${colors.white}` : '#f4f3f4'}
@@ -37,4 +37,7 @@ const settingStyles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'center',
   },
+  settingTitle:{
+    color:colors.black
+  }
 });

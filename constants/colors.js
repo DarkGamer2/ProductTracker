@@ -5,5 +5,8 @@ export const colors = {
   red: '#e91e63',
   blue: '#035efc',
   smokeWhite: '#cfcdcc',
-  black:"#000000"
+  black:"#000000",
+  darkGray:"#363232",
+  darkGrayAlt:"#4a4545",
+  darkGrayAlt2:"#6b6a6a"
 };

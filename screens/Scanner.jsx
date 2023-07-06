@@ -23,6 +23,7 @@ const scannerStyles = StyleSheet.create({
   },
   text:{
     fontFamily:"Lato-Italic",
-    fontSize:15
+    fontSize:15,
+    color:colors.black
   }
 });

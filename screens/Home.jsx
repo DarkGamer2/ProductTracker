@@ -46,7 +46,6 @@ const Home = ({navigation, user}) => {
          <FlatList data={Products.slice(0,3)} renderItem={cafeitem=>{
           return(
             <View style={homeStyles.productContainer}>
-              
               <Image style={homeStyles.productImage} source={{uri:`${cafeitem.item.productImage}`}}/>
               
             </View>
@@ -135,8 +134,9 @@ const homeStyles = StyleSheet.create({
     color:colors.black
   },
   productContainer: {
-    flexDirection: 'row',
-    justifyContent:'space-evenly'
+    flexDirection:"row",
+    justifyContent:"space-evenly",
+    alignItems:"center"
     
   },
   apiText: {

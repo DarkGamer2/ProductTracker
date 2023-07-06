@@ -70,7 +70,7 @@ const loginStyles = StyleSheet.create({
     width: 160,
     alignSelf: 'center',
     borderRadius: 8,
-    marginTop: 15,
+    marginTop: 25,
   },
   loginButtonText: {
     textAlign: 'center',
@@ -98,6 +98,7 @@ const loginStyles = StyleSheet.create({
     margin: 32,
     fontSize: 16,
     fontFamily:"Lato-Italic",
+    color:colors.black,
   },
   PTLogoStyle: {
     width: 100,
