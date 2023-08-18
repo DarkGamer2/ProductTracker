@@ -1,10 +1,14 @@
-import {StyleSheet, Text, View, Switch, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, Switch, ScrollView, Pressable} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../constants/colors';
-const Settings = () => {
+const Settings = ({navigation}) => {
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const toggleSwitch = () =>
     setDarkModeEnabled(previousState => !previousState);
+
+    const handleLogout=()=>{
+      navigation.navigate("Login")
+    }
   return (
     <View>
       <Text style={settingStyles.screenTitle}>Settings</Text>
@@ -17,6 +21,11 @@ const Settings = () => {
             onValueChange={toggleSwitch}
             value={darkModeEnabled}
           />
+        </View>
+        <View style={settingStyles.buttonContainer}>
+        <Pressable style={settingStyles.logoutButton} onPress={handleLogout}>
+          <Text style={settingStyles.logoutButtonText}>Logout</Text>
+        </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -39,5 +48,26 @@ const settingStyles = StyleSheet.create({
   },
   settingTitle:{
     color:colors.black
-  }
+  },
+  logoutButton: {
+    backgroundColor: colors.red,
+    padding: 10,
+    width: 160,
+    alignSelf: 'center',
+    borderRadius: 8,
+    margin: 10,
+  },
+  logoutButtonText: {
+    textAlign: 'center',
+    fontSize: 15,
+    color: colors.white,
+    fontFamily: 'BebasNeue-Regular',
+    letterSpacing:3,
+    textTransform: 'uppercase',
+  },
+  buttonContainer: {
+    width: 50,
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
 });

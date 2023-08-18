@@ -34,11 +34,11 @@ const AddProduct = () => {
         body: JSON.stringify(Product),
       },
       setButtonText(
-        <Text>
-          {' '}
-          <ActivityIndicator size={'small'} color={colors.white} /> Adding
-          Product...
-        </Text>,
+       <Text>
+        {' '}
+        <ActivityIndicator size={'small'} color={colors.white} /> Adding
+        Product...
+      </Text>
       ),
       setButtonColor('#00c438'),
     );
