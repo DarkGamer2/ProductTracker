@@ -26,7 +26,7 @@ const AddProduct = () => {
   const Product = {productName, productDescription, productPrice};
 
   const handleSubmit = () => {
-    const API_URL = 'https://producttracker-api-production.up.railway.app';
+    const API_URL = 'https://product-tracker-api-production.up.railway.app';
     fetch(
       `${API_URL}/api/products/addproduct`,
       {

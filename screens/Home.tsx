@@ -102,7 +102,9 @@ const Home = ({route, navigation}: any) => {
       </Modal>
 
       <View>
-        <Pressable onPress={() => navigation.navigate('AddCustomer')}>
+        <Pressable
+          onPress={() => navigation.navigate('AddCustomer')}
+          style={styles.addCustomerButton}>
           <Text style={styles.addCustomerText}>Add Customer</Text>
         </Pressable>
       </View>
@@ -171,6 +173,8 @@ const styling = (theme: ThemeType) =>
     viewProductsButtonText: {
       color: colors.white,
       textAlign: 'center',
+      fontSize: 18,
+      fontFamily: 'BebasNeue-Regular',
     },
     modalContainer: {
       flex: 1,
@@ -232,12 +236,26 @@ const styling = (theme: ThemeType) =>
       textAlign: 'center',
       fontSize: 15,
       fontFamily: 'BebasNeue-Regular',
-      letterSpacing: 3,
     },
     productName: {
       color: Colors[theme]?.textColor,
     },
     addCustomerText: {
       color: Colors[theme]?.textColor,
+      fontSize: 15,
+      fontFamily: 'BebasNeue-Regular',
+      textAlign: 'center',
+    },
+    addCustomerButton: {
+      backgroundColor: colors.orange,
+      padding: 15,
+      borderRadius: 10,
+      width: 150,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      marginTop: 20,
+      marginBottom: 10,
+      fontSize: 15,
+      fontFamily: 'BebasNeue-Regular',
     },
   });

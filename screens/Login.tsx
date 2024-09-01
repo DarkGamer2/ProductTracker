@@ -17,21 +17,24 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import {useTheme} from '../context/theme/ThemeContext';
+
 type Props = {
   navigation: NavigationProp<ParamListBase>;
   route: RouteProp<ParamListBase>;
 };
 
 type ThemeType = keyof typeof Colors;
+
 const Login = ({navigation}: Props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [buttonText, setButtonText] = useState('Login');
 
   const {theme} = useTheme();
+
   const handleLogin = async () => {
     try {
-      const response = await fetch(`http://10.0.2.2:4040/api/login`, {
+      const response = await fetch(`https://product-tracker-api-production.up.railway.app/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,20 +45,6 @@ const Login = ({navigation}: Props) => {
         }),
       });
       setButtonText('Logging in...');
-      // const response = await fetch(
-      //   'https://product-tracker-api-production.up.railway.app/api/login',
-      //   {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({
-      //       username: username,
-      //       password: password,
-      //     }),
-      //   },
-      // );
-      // setButtonText('Logging in...');
 
       // Log response status and body
       console.log('Response Status:', response.status);
@@ -70,10 +59,8 @@ const Login = ({navigation}: Props) => {
 
       // Check for error in response data
       if (data.error) {
-        // Handle error here
         console.log('Login failed:', data.error);
       } else {
-        // Navigate to BottomTabNavigator and pass username as parameter
         navigation.navigate('BottomTabNavigator', {
           screen: 'Home',
           params: {username: username},
@@ -81,11 +68,11 @@ const Login = ({navigation}: Props) => {
       }
     } catch (error) {
       console.log('Error:', error);
-      // Handle error here
+    } finally {
+      setButtonText('Login');
     }
   };
 
-  // Function to navigate to Register screen
   const handleRegisterNavigation = () => {
     navigation.navigate('Register');
   };
@@ -95,6 +82,7 @@ const Login = ({navigation}: Props) => {
   };
 
   const loginStyles = styling(theme);
+
   return (
     <ScrollView contentContainerStyle={loginStyles.container}>
       <View style={loginStyles.centered}>
@@ -122,7 +110,6 @@ const Login = ({navigation}: Props) => {
         </Pressable>
       </View>
       <View style={loginStyles.centered}>
-        {/* Use the function for onPress event of register button */}
         <Pressable
           style={loginStyles.registerButton}
           onPress={handleRegisterNavigation}>

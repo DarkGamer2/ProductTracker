@@ -35,7 +35,7 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await fetch('http://10.0.2.2:4040/api/customers');
+      const response = await fetch('https://product-tracker-api-production.up.railway.app/api/customers');
       const data = await response.json();
       if (response.ok) {
         setCustomers(data);
@@ -60,7 +60,7 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://10.0.2.2:4040/api/tabs/${customerId}`,
+        `https://product-tracker-api-production.up.railway.app/api/tabs/${customerId}`,
       );
       const data = await response.json();
       if (response.ok && data) {
@@ -123,7 +123,7 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://10.0.2.2:4040/api/tabs/${selectedCustomer.id}`,
+          `https://product-tracker-api-production.up.railway.app/api/tabs/${selectedCustomer.id}`,
           {
             method: 'POST',
             headers: {
@@ -158,7 +158,7 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
 
   const sendNotification = async (customerId: string, message: string) => {
     try {
-      await fetch(`http://10.0.2.2:4040/api/notify/${customerId}`, {
+      await fetch(`https://product-tracker-api-production.up.railway.app/api/notify/${customerId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -200,6 +200,11 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
           selectedTextStyle={tabStyles.selectedTextStyle}
         />
 
+<View>
+  <Pressable onPress={goBack} style={tabStyles.goBackButton}>
+    <Text style={tabStyles.goBackButtonText}>Go Back</Text>
+  </Pressable>
+</View>
         {selectedCustomer && (
           <View>
             <Text style={tabStyles.selectedCustomerText}>

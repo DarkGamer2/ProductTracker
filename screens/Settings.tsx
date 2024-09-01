@@ -116,8 +116,8 @@ const Settings = ({navigation}: {navigation: NavigationProp<any, any>}) => {
           </View>
           <View style={styles.option}>
             <Text style={styles.text}>Logout</Text>
-            <Pressable onPress={logOut}>
-              <Text style={styles.text}>Logout</Text>
+            <Pressable onPress={logOut} style={styles.logoutButton}>
+              <Text style={styles.logoutButtonText}>Logout</Text>
             </Pressable>
           </View>
         </View>
@@ -210,6 +210,22 @@ const styling = (theme: ThemeType, fontSize: number) =>
     profileViewText: {
       color: Colors[theme]?.textColor,
       fontSize: fontSize,
-      fontFamily: 'Inter-Bold',
+      fontFamily: 'BebasNeue-Regular',
+      textAlign: 'center',
+    },
+    logoutButton: {
+      marginTop: 20,
+      backgroundColor: colors.red,
+      padding: 10,
+      paddingLeft: 10,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logoutButtonText: {
+      color: Colors[theme]?.textColor,
+      fontSize: fontSize,
+      fontFamily: 'BebasNeue-Regular',
+      textAlign: 'center',
     },
   });
