@@ -17,11 +17,9 @@ import {Customer, TabItem} from '../types';
 
 type ThemeType = keyof typeof Colors;
 
-const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
+const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) => {
   const {theme} = useTheme();
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
-    null,
-  );
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [tabItems, setTabItems] = useState<TabItem[]>([]);
   const [dropdownValue, setDropdownValue] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
@@ -31,7 +29,10 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+    if (route.params?.scannedProduct) {
+      handleAddProductToTab(route.params.scannedProduct);
+    }
+  }, [route.params?.scannedProduct]);
 
   const fetchCustomers = async () => {
     try {
@@ -200,11 +201,12 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
           selectedTextStyle={tabStyles.selectedTextStyle}
         />
 
-<View>
-  <Pressable onPress={goBack} style={tabStyles.goBackButton}>
-    <Text style={tabStyles.goBackButtonText}>Go Back</Text>
-  </Pressable>
-</View>
+        <View>
+          <Pressable onPress={goBack} style={tabStyles.goBackButton}>
+            <Text style={tabStyles.goBackButtonText}>Go Back</Text>
+          </Pressable>
+        </View>
+
         {selectedCustomer && (
           <View>
             <Text style={tabStyles.selectedCustomerText}>
@@ -281,8 +283,8 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
               <Text style={tabStyles.saveTabButtonText}>Save Tab</Text>
             </Pressable>
 
-            <Pressable style={tabStyles.backButton} onPress={goBack}>
-              <Text style={tabStyles.backButtonText}>Go Back</Text>
+            <Pressable style={tabStyles.goBackButton} onPress={goBack}>
+              <Text style={tabStyles.goBackButtonText}>Go Back</Text>
             </Pressable>
           </View>
         )}
@@ -292,6 +294,7 @@ const AddTab: React.FC<{navigation: any}> = ({navigation}) => {
 };
 
 export default AddTab;
+
 const getStatusColor = (status: 'paid' | 'pending' | 'credit') => {
   switch (status) {
     case 'paid':

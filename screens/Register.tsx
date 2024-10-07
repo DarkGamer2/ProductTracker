@@ -86,7 +86,7 @@ const Register = ({navigation}:Props) => {
         <TextInput
           style={registerStyles.inputField}
           onChangeText={newPassword => setPassword(newPassword)}
-          value={password}
+          value={password} secureTextEntry={true}
         />
       </View>
       <View style={registerStyles.centered}>

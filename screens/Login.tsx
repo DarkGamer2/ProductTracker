@@ -6,6 +6,8 @@ import {
   TextInput,
   Pressable,
   Image,
+  Modal,
+  SafeAreaView,
 } from 'react-native';
 import React, {useState} from 'react';
 import PTLogo from '../assets/images/ProductTrackerIcon.png';
@@ -29,6 +31,8 @@ const Login = ({navigation}: Props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [buttonText, setButtonText] = useState('Login');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {theme} = useTheme();
 
@@ -52,6 +56,14 @@ const Login = ({navigation}: Props) => {
       console.log('Response Body:', responseBody);
 
       if (!response.ok) {
+        if (response.status === 401) {
+          setErrorMessage('Incorrect credentials');
+        } else if (response.status === 404) {
+          setErrorMessage('User does not exist');
+        } else {
+          setErrorMessage('An unknown error occurred');
+        }
+        setModalVisible(true);
         throw new Error('Network response was not ok');
       }
 
@@ -59,6 +71,8 @@ const Login = ({navigation}: Props) => {
 
       // Check for error in response data
       if (data.error) {
+        setErrorMessage(data.error);
+        setModalVisible(true);
         console.log('Login failed:', data.error);
       } else {
         navigation.navigate('BottomTabNavigator', {
@@ -67,6 +81,8 @@ const Login = ({navigation}: Props) => {
         });
       }
     } catch (error) {
+      setErrorMessage('Network error occurred');
+      setModalVisible(true);
       console.log('Error:', error);
     } finally {
       setButtonText('Login');
@@ -123,6 +139,29 @@ const Login = ({navigation}: Props) => {
           Forgot Password?
         </Text>
       </View>
+
+      <SafeAreaView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={loginStyles.modalContainer}>
+            <View style={loginStyles.modalView}>
+              <Text style={loginStyles.modalText}>{errorMessage}</Text>
+              <Pressable
+                style={[loginStyles.button, loginStyles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={loginStyles.textStyle}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
     </ScrollView>
   );
 };
@@ -156,7 +195,7 @@ const styling = (theme: ThemeType) =>
     loginButtonText: {
       textAlign: 'center',
       fontSize: 15,
-      color: Colors[theme]?.textColor,
+      color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
@@ -170,7 +209,7 @@ const styling = (theme: ThemeType) =>
     registerButtonText: {
       textAlign: 'center',
       fontSize: 15,
-      color: Colors[theme]?.textColor,
+      color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
@@ -201,5 +240,50 @@ const styling = (theme: ThemeType) =>
       color: colors.purple,
       fontFamily: 'Lato-Italic',
       margin: 20,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: Colors[theme]?.backgroundColor,
+      borderRadius: 20,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    buttonClose: {
+      backgroundColor: colors.pink,
+      padding: 10,
+      width: 160,
+      borderRadius: 8,
+      marginTop: 25,
+    },
+    textStyle: {
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      fontFamily:"BebasNeue-Regular"
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: 'center',
+      color: Colors[theme]?.textColor,
+      fontFamily:"Lato-Italic"
     },
   });

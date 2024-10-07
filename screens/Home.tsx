@@ -8,38 +8,66 @@ import {
   Dimensions,
   Image,
   Alert,
+  ActivityIndicator
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Item from '../components/Item';
-import {items} from '../data/items';
-import {colors} from '../constants/colors';
-import {useTheme} from '../context/theme/ThemeContext';
+import { items } from '../data/items';
+import { colors } from '../constants/colors';
+import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 
 type ThemeType = keyof typeof Colors;
 
-const Home = ({route, navigation}: any) => {
-  const {theme} = useTheme();
+interface Product {
+  _id: string;
+  productName: string;
+  productImage: string;
+  productPrice: number;
+}
+
+const Home = ({ route, navigation }: any) => {
+  const { theme } = useTheme();
   const username = route && route.params && route.params.username;
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Function to render each product item
-  const renderGridItem = ({item}: any) => (
+  // Function to fetch products from the API
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://product-tracker-api-production.up.railway.app/api/products');
+      const data = await response.json();
+      setProducts(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // Function to render each product item in the grid
+  const renderGridItem = ({ item }: any) => (
     <View
       style={[
         styles.itemContainer,
-        {width: (Dimensions.get('window').width - 40) / 3},
+        { width: (Dimensions.get('window').width - 40) / 3 },
       ]}>
-      <Image source={item.itemImage} style={styles.itemImage} />
+     <Image source={item.itemImage} style={styles.itemImage} />
       <Text style={styles.productName}>{item.itemName}</Text>
     </View>
   );
 
   // Function to render each item in the modal
-  const renderModalItem = ({item}: any) => (
-    <Item title={item.itemName} image={item.itemImage} price={item.price} />
+  const renderModalItem = ({ item }: { item: Product }) => (
+    <Item title={item.productName} image={item.productImage} price={item.productPrice} />
   );
 
   const styles = styling(theme);
@@ -82,13 +110,17 @@ const Home = ({route, navigation}: any) => {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>All Products</Text>
 
-            {/* Display all products in the modal */}
-            <FlatList
-              data={items}
-              renderItem={renderModalItem}
-              keyExtractor={item => item.id.toString()}
-              contentContainerStyle={styles.modalFlatListContainer}
-            />
+            {/* Display loading indicator or products */}
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.purple} />
+            ) : (
+              <FlatList
+                data={products}
+                renderItem={renderModalItem}
+                keyExtractor={(product: Product) => product._id.toString()}
+                contentContainerStyle={styles.modalFlatListContainer}
+              />
+            )}
 
             <Pressable
               style={styles.buttonClose}

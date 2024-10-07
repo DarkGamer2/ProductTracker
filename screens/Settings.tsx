@@ -1,19 +1,19 @@
-import {NavigationProp} from '@react-navigation/native';
-import {StyleSheet, Text, View, Pressable} from 'react-native';
-import React, {useEffect} from 'react';
+import { NavigationProp } from '@react-navigation/native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
+import React, { useEffect } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useTheme} from '../context/theme/ThemeContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
-import {useState} from 'react';
+import { useState } from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {colors} from '../constants/colors';
+import { colors } from '../constants/colors';
 type ThemeType = keyof typeof Colors;
 
-const Settings = ({navigation}: {navigation: NavigationProp<any, any>}) => {
+const Settings = ({ navigation }: { navigation: NavigationProp<any, any> }) => {
   const [fontSize, setFontSize] = useState<number>(20);
-  const {theme, setTheme} = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const fontSizes = [12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
   const logOut = async () => {
@@ -57,6 +57,24 @@ const Settings = ({navigation}: {navigation: NavigationProp<any, any>}) => {
     }
   };
 
+  const fetchUserIdFromAPI = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken'); // Retrieve token from storage
+      const response = await fetch('https://product-tracker-api-production.up.railway.app/api/users/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include token in headers
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log('Fetched user data:', data); // Log fetched data
+      return data._id; // Assuming the API returns an object with an _id field
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     loadFontSize();
   }, []);
@@ -95,7 +113,7 @@ const Settings = ({navigation}: {navigation: NavigationProp<any, any>}) => {
                   />
                 </View>
               )}
-              renderItem={({item}) => {
+              renderItem={({ item }) => {
                 return (
                   <View style={styles.dropdownItem}>
                     <Text style={styles.itemText}>{item.toString()}</Text>
@@ -110,7 +128,14 @@ const Settings = ({navigation}: {navigation: NavigationProp<any, any>}) => {
             <Text style={styles.text}>Profile</Text>
             <Pressable
               style={styles.profileViewButton}
-              onPress={() => navigation.navigate('Profile')}>
+              onPress={async () => {
+                const userId = await fetchUserIdFromAPI();
+                if (userId) {
+                  navigation.navigate('Profile', { _id: userId });
+                } else {
+                  console.log('User ID not found');
+                }
+              }}>
               <Text style={styles.profileViewText}>View</Text>
             </Pressable>
           </View>

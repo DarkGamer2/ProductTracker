@@ -1,31 +1,32 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {useTheme} from '../context/theme/ThemeContext';
-import Colors from '../context/theme/Colors';
+import { Text, View,StyleSheet } from 'react-native'
+import React from 'react'
+import { useTheme } from '../context/theme/ThemeContext'
+import Colors from '../context/theme/Colors'
 type ThemeType = keyof typeof Colors;
-
 const Scanner = () => {
-  const {theme} = useTheme();
-  const settingsStyles = styling(theme);
+  const { theme } = useTheme();
+  const scannerStyles = styling(theme);
   return (
-    <View>
-      <Text style={settingsStyles.appTitle}>Scanner</Text>
-      <Text style={settingsStyles.settingsText}>Feature coming soon...</Text>
+    <View style={scannerStyles.container}>
+      <Text style={scannerStyles.scannerText}>Scanner</Text>
     </View>
-  );
-};
+  )
+}
 
-export default Scanner;
+export default Scanner
 
-const styling = (theme: ThemeType) =>
-  StyleSheet.create({
-    appTitle: {
-      textAlign: 'center',
-      fontFamily: 'Inter-Bold',
-      color: Colors[theme]?.textColor,
-    },
-    settingsText: {
-      fontFamily: 'Inter-Regular',
-      color: Colors[theme]?.textColor,
-    },
-  });
+const styling = (theme: ThemeType) => StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    backgroundColor: Colors[theme]?.backgroundColor,
+  },
+  centered: {
+    alignItems: 'center',
+  },
+  scannerText:{
+    color: Colors[theme]?.textColor,
+    fontSize: 20,
+    fontWeight: 'bold',
+  }
+});
