@@ -233,7 +233,7 @@ const styling = (theme: ThemeType, fontSize: number) =>
       marginTop: 20,
     },
     profileViewText: {
-      color: Colors[theme]?.textColor,
+      color: colors.white,
       fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
@@ -248,7 +248,7 @@ const styling = (theme: ThemeType, fontSize: number) =>
       alignItems: 'center',
     },
     logoutButtonText: {
-      color: Colors[theme]?.textColor,
+      color: colors.white,
       fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',

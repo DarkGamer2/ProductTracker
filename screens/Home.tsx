@@ -249,7 +249,7 @@ const styling = (theme: ThemeType) =>
     },
     textStyle: {
       textAlign: 'center',
-      color: Colors[theme]?.textColor,
+      color: colors.white,
     },
     usernameText: {
       color: colors.purple,
@@ -273,7 +273,7 @@ const styling = (theme: ThemeType) =>
       color: Colors[theme]?.textColor,
     },
     addCustomerText: {
-      color: Colors[theme]?.textColor,
+      color: colors.white,
       fontSize: 15,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
