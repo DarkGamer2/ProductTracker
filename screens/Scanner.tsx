@@ -1,32 +1,72 @@
-import { Text, View,StyleSheet } from 'react-native'
-import React from 'react'
-import { useTheme } from '../context/theme/ThemeContext'
-import Colors from '../context/theme/Colors'
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, Alert } from 'react-native';
+import { RNCamera } from 'react-native-camera';
+import { useTheme } from '../context/theme/ThemeContext';
+import Colors from '../context/theme/Colors';
+
 type ThemeType = keyof typeof Colors;
+
 const Scanner = () => {
   const { theme } = useTheme();
   const scannerStyles = styling(theme);
+  const [scanned, setScanned] = useState(false);
+
+  const handleBarCodeScanned = ({ data }: { data: string }) => {
+    if (!scanned) {
+      setScanned(true);
+      Alert.alert('Barcode Scanned', `Barcode data: ${data}`, [
+        {
+          text: 'OK',
+          onPress: () => {
+            setScanned(false);
+            addProductToAccount(data);
+          },
+        },
+      ]);
+    }
+  };
+
+  const addProductToAccount = (barcode: string) => {
+    // Implement the logic to add the product to the user's account
+    // For example, make an API call to your backend server
+    console.log(`Adding product with barcode ${barcode} to user account`);
+  };
+
   return (
     <View style={scannerStyles.container}>
-      <Text style={scannerStyles.scannerText}>Scanner</Text>
+      <RNCamera
+        style={scannerStyles.camera}
+        onBarCodeRead={handleBarCodeScanned}
+        captureAudio={false}
+      >
+        <View style={scannerStyles.centered}>
+          <Text style={scannerStyles.scannerText}>Scan a Barcode</Text>
+        </View>
+      </RNCamera>
     </View>
-  )
-}
+  );
+};
 
-export default Scanner
+export default Scanner;
 
 const styling = (theme: ThemeType) => StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     justifyContent: 'center',
     backgroundColor: Colors[theme]?.backgroundColor,
+  },
+  camera: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   centered: {
     alignItems: 'center',
   },
-  scannerText:{
+  scannerText: {
     color: Colors[theme]?.textColor,
     fontSize: 20,
     fontWeight: 'bold',
-  }
+    marginBottom: 20,
+  },
 });
