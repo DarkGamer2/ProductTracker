@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Scanner from '../screens/Scanner';
 import {colors} from '../constants/colors';
 
-const BottomTabNavigator = ({user}) => {
+const BottomTabNavigator = ({user}:any) => {
   const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
@@ -17,6 +17,7 @@ const BottomTabNavigator = ({user}) => {
       screenOptions={{
         tabBarActiveTintColor: colors.purple,
         tabBarInactiveTintColor: colors.purple,
+        headerShown: false,
       }}>
       <Tab.Screen
         name="Home"
@@ -28,7 +29,6 @@ const BottomTabNavigator = ({user}) => {
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }}
-        user={user}
       />
       <Tab.Screen
         name="Add Product"

@@ -98,7 +98,7 @@ const styling = (theme: ThemeType) =>
     loginButtonText: {
       textAlign: 'center',
       fontSize: 15,
-      color: Colors[theme]?.textColor,
+      color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },

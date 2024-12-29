@@ -156,10 +156,10 @@ export default Settings;
 const styling = (theme: ThemeType, fontSize: number) =>
   StyleSheet.create({
     appTitle: {
-      fontSize: fontSize,
+      fontSize: 35,
       textAlign: 'center',
-      fontFamily: 'Inter-Bold',
-      color: Colors[theme]?.textColor,
+      fontFamily: 'BebasNeue-Regular',
+      color: colors.purple,
     },
     container: {
       flex: 1,

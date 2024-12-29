@@ -8,13 +8,13 @@ import {
   Dimensions,
   Image,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+SafeAreaView
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Item from '../components/Item';
-import { items } from '../data/items';
 import { colors } from '../constants/colors';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
@@ -54,14 +54,14 @@ const Home = ({ route, navigation }: any) => {
   }, []);
 
   // Function to render each product item in the grid
-  const renderGridItem = ({ item }: any) => (
+  const renderGridItem = ({ item }: {item:Product}) => (
     <View
       style={[
         styles.itemContainer,
         { width: (Dimensions.get('window').width - 40) / 3 },
       ]}>
-     <Image source={item.itemImage} style={styles.itemImage} />
-      <Text style={styles.productName}>{item.itemName}</Text>
+      <Image source={{ uri: item.productImage }} style={styles.itemImage} />
+      <Text style={styles.productName}>{item.productName}</Text>
     </View>
   );
 
@@ -73,7 +73,7 @@ const Home = ({ route, navigation }: any) => {
   const styles = styling(theme);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.welcomeText}>
         Welcome To <Text style={styles.appTitle}>Product Tracker</Text>
       </Text>
@@ -82,14 +82,19 @@ const Home = ({ route, navigation }: any) => {
       </Text>
 
       {/* Grid displaying the first 6 items */}
+    {loading ? (
+      <ActivityIndicator size="large" color={colors.purple} />
+    ) : products.length > 0 ? (
       <FlatList
-        data={items.slice(0, 6)} // Limit to first 6 items
+        data={products.slice(0, 6)}
         renderItem={renderGridItem}
-        keyExtractor={item => item.id.toString()}
-        numColumns={3} // 3 items per row
-        columnWrapperStyle={styles.row} // Align items in rows
+        keyExtractor={(product: Product) => product._id.toString()}
+        numColumns={3}
         contentContainerStyle={styles.flatListContainer}
       />
+    ) : (
+      <Text>No products To Display</Text>
+    )}
 
       <Pressable
         style={styles.viewProductsButton}
@@ -106,7 +111,7 @@ const Home = ({ route, navigation }: any) => {
           Alert.alert('Modal has been closed.');
           setModalVisible(false);
         }}>
-        <View style={styles.modalContainer}>
+        <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>All Products</Text>
 
@@ -130,7 +135,7 @@ const Home = ({ route, navigation }: any) => {
               </Text>
             </Pressable>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
 
       <View>
@@ -149,7 +154,7 @@ const Home = ({ route, navigation }: any) => {
           </Text>
         </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
