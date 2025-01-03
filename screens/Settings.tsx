@@ -146,6 +146,11 @@ const Settings = ({ navigation }: { navigation: NavigationProp<any, any> }) => {
             </Pressable>
           </View>
         </View>
+        <View>
+          <Pressable style={styles.feedbackButton} onPress={()=>navigation.navigate("Feedback")}>
+            <Text style={styles.feedbackButtonText}>Feedback</Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -253,4 +258,21 @@ const styling = (theme: ThemeType, fontSize: number) =>
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
     },
+    feedbackButton:{
+    
+        backgroundColor: colors.purple,
+        padding: 10,
+        paddingLeft: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    feedbackButtonText:{
+      color: colors.white,
+      fontSize: fontSize,
+      fontFamily: 'BebasNeue-Regular',
+      textAlign: 'center',
+    }
   });
