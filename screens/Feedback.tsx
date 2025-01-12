@@ -1,63 +1,144 @@
-import { StyleSheet, Text, View,SafeAreaView, TextInput,Pressable} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Animated,
+} from 'react-native';
+import React, { useState, useRef } from 'react';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 import { colors } from '../constants/colors';
-import { useState } from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {
   NavigationProp,
   ParamListBase,
   RouteProp,
 } from '@react-navigation/native';
+
 type ThemeType = keyof typeof Colors;
 
 type Props = {
   navigation: NavigationProp<ParamListBase>;
   route: RouteProp<ParamListBase>;
 };
-const Feedback = ({navigation}:Props) => {
 
-    const [firstName,setFirstName]=useState("");
-    const [lastName,setLastName]=useState("");
-    const [feedback,setFeedback]=useState("");
+const Feedback = ({ navigation }: Props) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [buttonColor, setButtonColor] = useState(colors.purple);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const animationValue = useRef(new Animated.Value(1)).current; // For button animation
+
   const { theme } = useTheme();
-
   const feedbackStyles = styling(theme);
 
-  const handleSubmitFeedback=()=>{
-    fetch("https://product-tracker-api-production.up.railway.app/api/feedback",{
-      method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-        firstName:firstName,
-        lastName:lastName,
-        feedback:feedback
+  const handleSubmitFeedback = () => {
+    setIsLoading(true);
+    setIsSuccess(false);
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(animationValue, {
+          toValue: 1.1,
+          duration: 300,
+          useNativeDriver: true,
         }),
+        Animated.timing(animationValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    fetch('https://product-tracker-api-production.up.railway.app/api/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        feedback,
+      }),
     })
-  }
+      .then(() => {
+        setButtonColor(colors.green);
+        setIsLoading(false);
+        setIsSuccess(true);
+        Animated.timing(animationValue, { toValue: 1, duration: 300, useNativeDriver: true }).stop();
+      })
+      .catch((error) => {
+        console.error('Error submitting feedback:', error);
+        setIsLoading(false);
+      });
+  };
+
   return (
     <SafeAreaView style={feedbackStyles.container}>
-     <View style={feedbackStyles.centered}>
-     <Text style={feedbackStyles.appTitle}>Feedback</Text>
-      <View>
-        <Text style={feedbackStyles.feedbackFormLabel}>First Name</Text>
-        <TextInput style={feedbackStyles.feedbackFormInput} onChangeText={firstName=>setFirstName(firstName)} value={firstName}/>
-        <Text style={feedbackStyles.feedbackFormLabel}>Last Name</Text>
-        <TextInput style={feedbackStyles.feedbackFormInput} onChangeText={lastName=>setLastName(lastName)} value={lastName}/>
-        <Text style={feedbackStyles.feedbackFormLabel}>Feedback</Text>
-        <TextInput style={feedbackStyles.feedbackFormInputTextArea} onChangeText={feedback=>setFeedback(feedback)} value={feedback}/>
+      <View style={feedbackStyles.centered}>
+        <Text style={feedbackStyles.appTitle}>Feedback</Text>
+        <View>
+          <Text style={feedbackStyles.feedbackFormLabel}>First Name</Text>
+          <TextInput
+            style={feedbackStyles.feedbackFormInput}
+            onChangeText={setFirstName}
+            value={firstName}
+            placeholder="Enter your first name"
+            placeholderTextColor={Colors[theme]?.placeholderColor}
+          />
+          <Text style={feedbackStyles.feedbackFormLabel}>Last Name</Text>
+          <TextInput
+            style={feedbackStyles.feedbackFormInput}
+            onChangeText={setLastName}
+            value={lastName}
+            placeholder="Enter your last name"
+            placeholderTextColor={Colors[theme]?.placeholderColor}
+          />
+          <Text style={feedbackStyles.feedbackFormLabel}>Feedback</Text>
+          <TextInput
+            style={feedbackStyles.feedbackFormInputTextArea}
+            onChangeText={setFeedback}
+            value={feedback}
+            placeholder="Enter your feedback"
+            placeholderTextColor={Colors[theme]?.placeholderColor}
+            multiline
+          />
+        </View>
+        <View>
+          <Animated.View style={{ transform: [{ scale: animationValue }] }}>
+            <Pressable
+              style={[
+                feedbackStyles.loginButton,
+                { backgroundColor: buttonColor, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+              ]}
+              onPress={handleSubmitFeedback}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color={colors.white} />
+              ) : isSuccess ? (
+                <Icon name="checkmark-circle" size={20} color={colors.white} />
+              ) : (
+                <Text style={feedbackStyles.loginButtonText}>Submit</Text>
+              )}
+            </Pressable>
+          </Animated.View>
+          <Pressable
+            style={feedbackStyles.goBackButton}
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <Text style={feedbackStyles.loginButtonText}>Go Back</Text>
+          </Pressable>
+        </View>
       </View>
-      <View>
-        <Pressable style={feedbackStyles.loginButton} onPress={handleSubmitFeedback}>
-          <Text style={feedbackStyles.loginButtonText}>Submit</Text>
-        </Pressable>
-        <Pressable style={feedbackStyles.goBackButton} onPress={()=>navigation.navigate("Settings")}>
-          <Text style={feedbackStyles.loginButtonText}>Go Back</Text>
-        </Pressable>
-      </View>
-     </View>
     </SafeAreaView>
   );
 };
@@ -66,50 +147,47 @@ export default Feedback;
 
 const styling = (theme: ThemeType) =>
   StyleSheet.create({
-     container: {
-          flexGrow: 1,
-          justifyContent: 'center',
-          backgroundColor: Colors[theme]?.backgroundColor,
-        },
+    container: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      backgroundColor: Colors[theme]?.backgroundColor,
+    },
     appTitle: {
       fontSize: 35,
       textAlign: 'center',
       fontFamily: 'BebasNeue-Regular',
       color: colors.purple, // Assuming you want to keep the static color for now.
     },
-    feedbackFormLabel:{
-       fontSize: 16,
-            fontFamily: 'Lato-Italic',
-            color: Colors[theme]?.textColor,
-            marginBottom: 10,
-             textAlign:'center'
-    },
-    feedbackFormInput:{
-        color: Colors[theme]?.textColor,
-            width: 200,
-            marginBottom: 20,
-            borderRadius: 8,
-            padding: 8,
-            borderWidth: 1,
-            borderColor: colors.purple,
-           
-    },
-    feedbackFormInputTextArea:{
+    feedbackFormLabel: {
+      fontSize: 16,
+      fontFamily: 'Lato-Italic',
       color: Colors[theme]?.textColor,
-          width: 200,
-          height:200,
-          marginBottom: 20,
-          borderRadius: 8,
-          padding: 8,
-          borderWidth: 1,
-          borderColor: colors.purple,
-         
-  },
-    centered:{
-      alignItems:"center"
+      marginBottom: 10,
+      textAlign: 'center',
+    },
+    feedbackFormInput: {
+      color: Colors[theme]?.textColor,
+      width: 200,
+      marginBottom: 20,
+      borderRadius: 8,
+      padding: 8,
+      borderWidth: 1,
+      borderColor: colors.purple,
+    },
+    feedbackFormInputTextArea: {
+      color: Colors[theme]?.textColor,
+      width: 200,
+      height: 200,
+      marginBottom: 20,
+      borderRadius: 8,
+      padding: 8,
+      borderWidth: 1,
+      borderColor: colors.purple,
+    },
+    centered: {
+      alignItems: 'center',
     },
     loginButton: {
-      backgroundColor: colors.purple,
       padding: 10,
       width: 160,
       borderRadius: 8,

@@ -61,7 +61,7 @@ const Home = ({ route, navigation }: any) => {
         { width: (Dimensions.get('window').width - 40) / 3 },
       ]}>
       <Image source={{ uri: item.productImage }} style={styles.itemImage} />
-      <Text style={styles.productName}>{item.productName}</Text>
+      <Text style={styles.productName}>{item.productName ||"Item"}</Text>
     </View>
   );
 

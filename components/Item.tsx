@@ -13,8 +13,8 @@ const Item = (props: any) => {
     <View style={styles.container}>
       <Image source={{ uri: props.image }} style={styles.itemImage} />
       <View>
-        <Text style={styles.itemTitle}>{props.title}</Text>
-        <Text style={styles.price}>${props.price}</Text>
+        <Text style={styles.itemTitle}>{props.title || 'Item'}</Text>
+        <Text style={styles.price}>${props.price || 0}</Text>
       </View>
     </View>
   );

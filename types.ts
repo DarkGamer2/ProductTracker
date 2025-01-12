@@ -1,5 +1,6 @@
 // types.ts
 export interface Customer {
+  username: string;
   id: string;
   name: string;
 }

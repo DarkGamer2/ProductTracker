@@ -7,13 +7,15 @@ import {
   ActivityIndicator,
   TextInput,
   Image,
+  Animated,
 } from 'react-native';
 import React from 'react';
 import { colors } from '../constants/colors';
-import { useState } from 'react';
+import { useState,useRef } from 'react';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 import RNFS from 'react-native-fs';
 
 type ThemeType = keyof typeof Colors;
@@ -27,10 +29,13 @@ const AddProduct = () => {
   const [buttonColor, setButtonColor] = useState(colors.purple);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const [isSuccess, setIsSuccess] = useState(false);
   const { theme } = useTheme();
-  const Product = { productName, productDescription, productPrice, productImage };
 
+  const animationValue = useRef(new Animated.Value(1)).current;
+
+  const Product = { productName, productDescription, productPrice, productImage };
+  const defaultProductPicture="https://cdn-icons-png.flaticon.com/512/6030/6030010.png"
   const handleImagePicker = () => {
     try {
       launchImageLibrary({ mediaType: 'photo' }, async (response) => {
@@ -53,14 +58,28 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(animationValue, {
+          toValue: 1.1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(animationValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
     setButtonText('Adding Product...');
     setButtonColor('#00c438');
-
+  
     try {
       const API_URL = 'https://product-tracker-api-production.up.railway.app';
-      const response = await fetch(`${API_URL}/api/products/addproduct`, {
+      const response = await fetch(`${API_URL}/api/products/addProduct`, {
         method: 'POST',
-        mode: 'cors',
+        mode:'cors',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -77,6 +96,8 @@ const AddProduct = () => {
       setButtonText('Add Product');
       setButtonColor(colors.purple);
     } finally {
+    setIsSuccess(true);
+      Animated.timing(animationValue,{toValue:1,duration:300,useNativeDriver:true,}).stop();
       setIsLoading(false);
     }
   };
@@ -114,21 +135,29 @@ const AddProduct = () => {
         </Pressable>
         {productImage ? (
           <Image
-            source={{ uri: `data:image/jpeg;base64,${productImage}` }}
+            source={{ uri: `data:image/jpeg;base64,${productImage}`||defaultProductPicture }}
             style={formStyles.imagePreview}
           />
         ) : null}
-        <Pressable
-          style={[formStyles.addProductButton, { backgroundColor: buttonColor }]}
-          onPress={handleSubmit}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator size={'small'} color={colors.white} />
-          ) : (
-            <Text style={formStyles.addButtonText}>{buttonText}</Text>
-          )}
-        </Pressable>
+       <View>
+       <Animated.View style={{ transform: [{ scale: animationValue }] }}>
+  <Pressable
+    style={[formStyles.addProductButton, { backgroundColor: buttonColor }]}
+    onPress={handleSubmit}
+    disabled={isLoading}
+  >
+    <View style={formStyles.iconContainer}>
+      {isLoading ? (
+        <ActivityIndicator color={colors.white} />
+      ) : isSuccess ? (
+        <Icon name="checkmark-circle" size={20} color={colors.white} />
+      ) : (
+        <Text style={formStyles.addButtonText}>{buttonText}</Text>
+      )}
+    </View>
+  </Pressable>
+</Animated.View>
+       </View>
         {error ? <Text style={formStyles.errorText}>{error}</Text> : null}
       </View>
     </ScrollView>
@@ -206,4 +235,16 @@ const styling = (theme: ThemeType) =>
       alignSelf: 'center',
       marginTop: 10,
     },
+    // productAddedText:{
+    //   textAlign:"center",
+    //   color: 'white',
+    //   fontFamily: 'BebasNeue-Regular',
+    //   fontSize: 15,
+    // }
+    iconContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row', // Ensures it aligns properly if mixed with text/icons
+    },
+    
   });

@@ -36,7 +36,12 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
 
   const fetchCustomers = async () => {
     try {
-      const response = await fetch('https://product-tracker-api-production.up.railway.app/api/customers');
+      const response = await fetch('https://product-tracker-api-production.up.railway.app/api/customers',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         setCustomers(data);
@@ -64,15 +69,21 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
         `https://product-tracker-api-production.up.railway.app/api/tabs/${customerId}`,
       );
       const data = await response.json();
+  
       if (response.ok && data) {
+        // Existing tab found
         setTabItems(data.products || []);
         calculateTotal(data.products);
       } else {
+        // No existing tab found, fallback to empty tab
         setTabItems([]);
         calculateTotal([]);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to fetch the customer tab');
+      // Handle network errors gracefully
+      console.error('Error fetching customer tab:', error);
+      setTabItems([]);
+      calculateTotal([]);
     } finally {
       setIsLoading(false);
     }
@@ -187,19 +198,19 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
         <Text style={tabStyles.headerText}>Select a Customer</Text>
 
         <Dropdown
-          style={tabStyles.dropdown}
-          data={customers.map(customer => ({
-            label: customer.name,
-            value: customer.id,
-          }))}
-          labelField="label"
-          valueField="value"
-          placeholder="Select a Customer"
-          value={dropdownValue}
-          onChange={item => handleSelectCustomer(item.value)}
-          containerStyle={tabStyles.dropdownContainer}
-          selectedTextStyle={tabStyles.selectedTextStyle}
-        />
+  style={tabStyles.dropdown}
+  data={customers.map(customer => ({
+    label: customer.name || customer.username || 'Unnamed Customer',
+    value: customer.id,
+  }))}
+  labelField="label"
+  valueField="value"
+  placeholder="Select a Customer"
+  value={dropdownValue}
+  onChange={item => handleSelectCustomer(item.value)}
+  containerStyle={tabStyles.dropdownContainer}
+  selectedTextStyle={tabStyles.selectedTextStyle}
+/>
 
         <View>
           <Pressable onPress={goBack} style={tabStyles.goBackButton}>
@@ -211,8 +222,8 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
           <View>
             <Text style={tabStyles.selectedCustomerText}>
               {tabItems.length > 0
-                ? `Existing Tab for: ${selectedCustomer.name}`
-                : `Creating New Tab for: ${selectedCustomer.name}`}
+                ? `Existing Tab for: ${selectedCustomer.username}`
+                : `Creating New Tab for: ${selectedCustomer.username}`}
             </Text>
 
             <Text style={tabStyles.headerText}>Current Tab:</Text>

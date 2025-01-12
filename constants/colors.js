@@ -11,4 +11,5 @@ export const colors = {
   darkGrayAlt2: '#6b6a6a',
   pink: '#fc03d3',
   orange: '#ff8800',
+  green:"#34eb67"
 };
