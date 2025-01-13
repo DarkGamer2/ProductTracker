@@ -36,8 +36,8 @@ const Feedback = ({ navigation }: Props) => {
 
   const animationValue = useRef(new Animated.Value(1)).current; // For button animation
 
-  const { theme } = useTheme();
-  const feedbackStyles = styling(theme);
+  const { theme,fontSize } = useTheme();
+  const feedbackStyles = styling(theme,fontSize);
 
   const handleSubmitFeedback = () => {
     setIsLoading(true);
@@ -92,7 +92,6 @@ const Feedback = ({ navigation }: Props) => {
             onChangeText={setFirstName}
             value={firstName}
             placeholder="Enter your first name"
-            placeholderTextColor={Colors[theme]?.placeholderColor}
           />
           <Text style={feedbackStyles.feedbackFormLabel}>Last Name</Text>
           <TextInput
@@ -100,7 +99,6 @@ const Feedback = ({ navigation }: Props) => {
             onChangeText={setLastName}
             value={lastName}
             placeholder="Enter your last name"
-            placeholderTextColor={Colors[theme]?.placeholderColor}
           />
           <Text style={feedbackStyles.feedbackFormLabel}>Feedback</Text>
           <TextInput
@@ -108,7 +106,6 @@ const Feedback = ({ navigation }: Props) => {
             onChangeText={setFeedback}
             value={feedback}
             placeholder="Enter your feedback"
-            placeholderTextColor={Colors[theme]?.placeholderColor}
             multiline
           />
         </View>
@@ -145,7 +142,7 @@ const Feedback = ({ navigation }: Props) => {
 
 export default Feedback;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,
@@ -153,13 +150,13 @@ const styling = (theme: ThemeType) =>
       backgroundColor: Colors[theme]?.backgroundColor,
     },
     appTitle: {
-      fontSize: 35,
+      fontSize: fontSize,
       textAlign: 'center',
       fontFamily: 'BebasNeue-Regular',
       color: colors.purple, // Assuming you want to keep the static color for now.
     },
     feedbackFormLabel: {
-      fontSize: 16,
+      fontSize: fontSize,
       fontFamily: 'Lato-Italic',
       color: Colors[theme]?.textColor,
       marginBottom: 10,
@@ -195,7 +192,7 @@ const styling = (theme: ThemeType) =>
     },
     loginButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,

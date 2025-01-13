@@ -12,8 +12,7 @@ type Props = {
 };
 
 const AdminForm = ({ navigation }: Props) => {
-  const { theme } = useTheme(); // Use `theme` from context
-  const fontSize = 16; // Default or customizable font size
+  const { theme ,fontSize} = useTheme(); // Use `theme` from context
   const styles = styling(theme, fontSize); // Generate styles dynamically
   const [adminStatus, setAdminStatus] = useState(false);
   const [username, setUsername] = useState('');
@@ -179,13 +178,13 @@ const styling = (theme: ThemeType, fontSize: number) => {
     },
     submitButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
     screenTitle: {
-      fontSize: 40,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       color: colors.purple,
       marginTop: 35,

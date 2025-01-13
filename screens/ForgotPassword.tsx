@@ -34,8 +34,8 @@ const ForgotPassword = ({ navigation }: Props) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [buttonState, setButtonState] = useState<'normal' | 'success' | 'error'>('normal');
-  const { theme } = useTheme();
-  const forgotStyles = styling(theme);
+  const { theme,fontSize } = useTheme();
+  const forgotStyles = styling(theme,fontSize);
   const animationValue = useRef(new Animated.Value(1)).current;
 
   const handleGoBack = () => {
@@ -186,7 +186,7 @@ const ForgotPassword = ({ navigation }: Props) => {
 
 export default ForgotPassword;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,
@@ -213,7 +213,7 @@ const styling = (theme: ThemeType) =>
       borderColor: colors.purple,
     },
     label: {
-      fontSize: 16,
+      fontSize: fontSize,
       fontFamily: 'Lato-Italic',
       color: Colors[theme]?.textColor,
       marginBottom: 10,
@@ -229,7 +229,7 @@ const styling = (theme: ThemeType) =>
     },
     loginButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize:fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,

@@ -32,9 +32,9 @@ const Register = ({ navigation }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [buttonState, setButtonState] = useState<'normal' | 'success' | 'error'>('normal');
   const animationValue = useRef(new Animated.Value(1)).current;
-  const { theme } = useTheme();
+  const { theme,fontSize } = useTheme();
 
-  const registerStyles = styling(theme);
+  const registerStyles = styling(theme,fontSize);
 
   const handleRegister = async () => {
     setIsLoading(true);
@@ -136,7 +136,7 @@ const Register = ({ navigation }: Props) => {
   );
 };
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,
@@ -165,7 +165,7 @@ const styling = (theme: ThemeType) =>
     },
     loginButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
@@ -180,7 +180,7 @@ const styling = (theme: ThemeType) =>
       borderColor: colors.purple,
     },
     label: {
-      fontSize: 16,
+      fontSize: fontSize,
       fontFamily: 'Lato-Italic',
       color: Colors[theme]?.textColor,
       marginBottom: 10,
@@ -213,7 +213,7 @@ const styling = (theme: ThemeType) =>
     },
     backButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,

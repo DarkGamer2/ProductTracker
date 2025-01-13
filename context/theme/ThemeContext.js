@@ -1,58 +1,48 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
-import {useColorScheme} from 'react-native';
-import {get, save} from '../theme/storage';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Colors from './Colors';  // Adjust this import path accordingly
 
 const ThemeContext = createContext();
 
-export const ThemeProvider = ({children}) => {
-  const systemTheme = useColorScheme();
-  const [theme, setTheme] = useState(systemTheme);
-
-  const themeOperations = useCallback(
-    async theme => {
-      switch (theme) {
-        case 'dark':
-          setTheme('dark');
-          await save('Theme', 'dark');
-          await save('IsDefault', false);
-          break;
-        case 'light':
-          setTheme('light');
-          await save('Theme', 'light');
-          await save('IsDefault', false);
-          break;
-        case 'default':
-          setTheme(systemTheme);
-          await save('Theme', systemTheme);
-          await save('IsDefault', true);
-          break;
-      }
-    },
-    [systemTheme],
-  );
-
-  const getAppTheme = useCallback(async () => {
-    const savedTheme = await get('Theme');
-    const isDefault = await get('IsDefault');
-    if (isDefault) {
-      setTheme(systemTheme);
-    } else {
-      setTheme(savedTheme);
-    }
-  }, [systemTheme]);
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('light'); // Default theme
+  const [fontSize, setFontSize] = useState(20); // Default font size
 
   useEffect(() => {
-    getAppTheme();
-  }, [getAppTheme]);
+    const loadSettings = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem('theme');
+        const savedFontSize = await AsyncStorage.getItem('fontSize');
+        if (savedTheme) setTheme(savedTheme);
+        if (savedFontSize) setFontSize(parseInt(savedFontSize, 10));
+      } catch (error) {
+        console.error('Error loading theme and font size:', error);
+      }
+    };
+    loadSettings();
+  }, []);
+
+  const updateFontSize = async (newFontSize) => {
+    try {
+      setFontSize(newFontSize);
+      await AsyncStorage.setItem('fontSize', newFontSize.toString());
+    } catch (error) {
+      console.error('Error saving font size:', error);
+    }
+  };
+
+  const toggleTheme = async () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    try {
+      await AsyncStorage.setItem('theme', newTheme);
+    } catch (error) {
+      console.error('Error saving theme:', error);
+    }
+  };
 
   return (
-    <ThemeContext.Provider value={{theme, setTheme: themeOperations}}>
+    <ThemeContext.Provider value={{ theme, fontSize, toggleTheme, updateFontSize }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -29,7 +29,7 @@ interface Product {
 }
 
 const Home = ({ route, navigation }: any) => {
-  const { theme } = useTheme();
+  const { theme,fontSize } = useTheme();
   const username = route && route.params && route.params.username;
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -70,7 +70,7 @@ const Home = ({ route, navigation }: any) => {
     <Item title={item.productName} image={item.productImage} price={item.productPrice} />
   );
 
-  const styles = styling(theme);
+  const styles = styling(theme,fontSize);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -160,7 +160,7 @@ const Home = ({ route, navigation }: any) => {
 
 export default Home;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -169,13 +169,13 @@ const styling = (theme: ThemeType) =>
     },
     welcomeText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: Colors[theme]?.textColor,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
     appTitle: {
-      fontSize: 30,
+      fontSize: fontSize,
       textAlign: 'center',
       marginTop: 35,
       fontFamily: 'BebasNeue-Regular',
@@ -210,7 +210,7 @@ const styling = (theme: ThemeType) =>
     viewProductsButtonText: {
       color: colors.white,
       textAlign: 'center',
-      fontSize: 18,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
     },
     modalContainer: {
@@ -238,6 +238,8 @@ const styling = (theme: ThemeType) =>
       marginBottom: 15,
       textAlign: 'center',
       color: colors.purple,
+      fontFamily: 'BebasNeue-Regular',
+      fontSize: fontSize,
     },
     modalFlatListContainer: {
       flexGrow: 2,
@@ -258,6 +260,7 @@ const styling = (theme: ThemeType) =>
     },
     usernameText: {
       color: colors.purple,
+      fontSize:fontSize
     },
     addTabButton: {
       backgroundColor: colors.blue,
@@ -271,15 +274,16 @@ const styling = (theme: ThemeType) =>
     addTabButtonText: {
       color: colors.white,
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
     },
     productName: {
       color: Colors[theme]?.textColor,
+      fontSize:fontSize
     },
     addCustomerText: {
       color: colors.white,
-      fontSize: 15,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
     },

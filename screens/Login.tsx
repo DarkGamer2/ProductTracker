@@ -34,7 +34,7 @@ const Login = ({navigation}: Props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const {theme} = useTheme();
+  const {theme,fontSize} = useTheme();
 
   const handleLogin = async () => {
     try {
@@ -97,7 +97,7 @@ const Login = ({navigation}: Props) => {
     navigation.navigate('ForgotPassword');
   };
 
-  const loginStyles = styling(theme);
+  const loginStyles = styling(theme,fontSize);
 
   return (
     <ScrollView contentContainerStyle={loginStyles.container}>
@@ -168,7 +168,7 @@ const Login = ({navigation}: Props) => {
 
 export default Login;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,
@@ -194,7 +194,7 @@ const styling = (theme: ThemeType) =>
     },
     loginButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
@@ -208,7 +208,7 @@ const styling = (theme: ThemeType) =>
     },
     registerButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
@@ -224,7 +224,7 @@ const styling = (theme: ThemeType) =>
     },
     label: {
       marginBottom: 10,
-      fontSize: 16,
+      fontSize: fontSize,
       fontFamily: 'Lato-Italic',
       color: Colors[theme]?.textColor,
     },
@@ -236,7 +236,7 @@ const styling = (theme: ThemeType) =>
     },
     forgotPasswordText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.purple,
       fontFamily: 'Lato-Italic',
       margin: 20,
@@ -284,6 +284,7 @@ const styling = (theme: ThemeType) =>
       marginBottom: 15,
       textAlign: 'center',
       color: Colors[theme]?.textColor,
-      fontFamily:"Lato-Italic"
+      fontFamily:"Lato-Italic",
+      fontSize: fontSize,
     },
   });

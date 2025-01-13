@@ -19,7 +19,7 @@ import {Customer, TabItem} from '../types';
 type ThemeType = keyof typeof Colors;
 
 const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) => {
-  const {theme} = useTheme();
+  const {theme,fontSize} = useTheme();
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [tabItems, setTabItems] = useState<TabItem[]>([]);
   const [dropdownValue, setDropdownValue] = useState<string | null>(null);
@@ -187,7 +187,7 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
     navigation.goBack();
   };
 
-  const tabStyles = styling(theme);
+  const tabStyles = styling(theme,fontSize);
 
   return (
     <SafeAreaView style={tabStyles.container}>
@@ -320,7 +320,7 @@ const getStatusColor = (status: 'paid' | 'pending' | 'credit') => {
   }
 };
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       padding: 20,
@@ -328,17 +328,17 @@ const styling = (theme: ThemeType) =>
       backgroundColor: Colors[theme]?.backgroundColor,
     },
     headerText: {
-      fontSize: 18,
+      fontSize: fontSize,
       fontWeight: 'bold',
       marginVertical: 10,
       color: Colors[theme]?.textColor,
     },
     customerText: {
-      fontSize: 16,
+      fontSize: fontSize,
       color: Colors[theme]?.textColor,
     },
     selectedCustomerText: {
-      fontSize: 16,
+      fontSize: fontSize,
       marginVertical: 10,
       color: Colors[theme]?.textColor,
     },
@@ -352,7 +352,7 @@ const styling = (theme: ThemeType) =>
       borderRadius: 5,
     },
     tabItemText: {
-      fontSize: 16,
+      fontSize: fontSize,
       color: 'white',
     },
     statusButtons: {
@@ -362,7 +362,7 @@ const styling = (theme: ThemeType) =>
     },
     appTitle: {
       textAlign: 'center',
-      fontSize: 35,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       margin: 20,
       color: colors.purple,
@@ -380,7 +380,7 @@ const styling = (theme: ThemeType) =>
       maxHeight: 200, // Make dropdown scrollable
     },
     selectedTextStyle: {
-      fontSize: 16,
+      fontSize: fontSize,
       color: Colors[theme]?.textColor,
     },
     saveTabButton: {
@@ -392,7 +392,7 @@ const styling = (theme: ThemeType) =>
     },
     saveTabButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
@@ -407,13 +407,13 @@ const styling = (theme: ThemeType) =>
     },
     goBackButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
     totalPriceText: {
-      fontSize: 24,
+      fontSize: fontSize,
       color: Colors[theme].textColor,
       textAlign: 'center',
       marginVertical: 16,

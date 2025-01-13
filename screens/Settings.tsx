@@ -1,4 +1,4 @@
-import { NavigationProp,RouteProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { StyleSheet, Text, View, Pressable, Modal, Animated } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,13 +12,12 @@ import { colors } from '../constants/colors';
 
 type ThemeType = keyof typeof Colors;
 
-const Settings = ({ navigation,route }: { navigation: NavigationProp<any, any>, route: RouteProp<{ params: { userId: string } }, 'params'> }) => {
-  const [fontSize, setFontSize] = useState<number>(20);
+const Settings = ({ navigation, route }: { navigation: NavigationProp<any, any>, route: RouteProp<{ params: { userId: string } }, 'params'> }) => {
   const [adminAccess, setAdminAccess] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const slideAnim = useRef(new Animated.Value(300)).current; // Default off-screen position
-  const { theme, setTheme } = useTheme();
-  const {userId}=route.params||{};
+  const { theme, setTheme, fontSize, updateFontSize } = useTheme();
+  const { userId } = route.params || {};
   const fontSizes = [12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
 
   const logOut = async () => {
@@ -39,24 +38,8 @@ const Settings = ({ navigation,route }: { navigation: NavigationProp<any, any>, 
 
   const styles = styling(theme, fontSize);
 
-  const saveFontSize = async (size: number) => {
-    try {
-      await AsyncStorage.setItem('fontSize', size.toString());
-      setFontSize(size);
-    } catch (e) {
-      console.log('Error saving fontSize', e);
-    }
-  };
-
-  const loadFontSize = async () => {
-    try {
-      const size = await AsyncStorage.getItem('fontSize');
-      if (size !== null) {
-        setFontSize(parseInt(size, 10));
-      }
-    } catch (e) {
-      console.log('Error loading fontSize', e);
-    }
+  const saveFontSize = (size: number) => {
+    updateFontSize(size);  // Use context function to update font size globally
   };
 
   const fetchUserIdFromAPI = async () => {
@@ -83,7 +66,6 @@ const Settings = ({ navigation,route }: { navigation: NavigationProp<any, any>, 
       return null;
     }
   };
-
 
   const slideUp = () => {
     setShowModal(true);
@@ -128,10 +110,6 @@ const Settings = ({ navigation,route }: { navigation: NavigationProp<any, any>, 
     }
   };
 
-  useEffect(() => {
-    loadFontSize();
-  }, []);
-
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
@@ -151,95 +129,92 @@ const Settings = ({ navigation,route }: { navigation: NavigationProp<any, any>, 
           <View style={styles.option}>
             <Text style={styles.text}>Font Size</Text>
             <SelectDropdown
-  data={fontSizes}
-  defaultValue={`${fontSize}`}
-  onSelect={(selectedItem: number) => {
-    setFontSize(selectedItem);
-    saveFontSize(selectedItem);
-  }}
-  renderButton={(selectedItem: number) => (
-    <View style={styles.dropdownButton}>
-      <Text style={styles.buttonText}>
-        {selectedItem || fontSize}
-      </Text>
-      <MaterialCommunityIcons
-        name="chevron-down"
-        size={20}
-        style={styles.buttonIcon}
-      />
-    </View>
-  )}
-  renderItem={(item) => (
-    <View style={styles.dropdownItem}>
-      <Text style={styles.itemText}>{item.toString()}</Text>
-    </View>
-  )}
-  dropdownStyle={styles.dropdownStyle}
-/>
-          </View>
-          <View style={styles.option}>
-            <Text style={styles.text}>Profile</Text>
-            <Pressable
-              style={styles.profileViewButton}
-              onPress={async () => {
-                const userId = await fetchUserIdFromAPI();
-                if (userId) {
-                  navigation.navigate('Profile', { _id: userId });
-                } else {
-                  console.log('User ID not found');
-                }
-              }}>
-              <Text style={styles.profileViewText}>View</Text>
-            </Pressable>
-          </View>
-          <View style={styles.option}>
-            <Text style={styles.text}>Logout</Text>
-            <Pressable onPress={logOut} style={styles.logoutButton}>
-              <Text style={styles.logoutButtonText}>Logout</Text>
-            </Pressable>
-          </View>
-        </View>
-        <View>
-          <Pressable
-            style={styles.feedbackButton}
-            onPress={() => navigation.navigate('Feedback')}>
-            <Text style={styles.feedbackButtonText}>Feedback</Text>
-          </Pressable>
-        </View>
-        <View>
-          <Pressable
-            style={styles.adminButton}
-            onPress={() => {
-              handleAdminAccess();
-            }}>
-            <Text style={styles.adminButtonText}>Admin</Text>
-          </Pressable>
-          <SafeAreaView>
-            <Modal visible={showModal} transparent>
-              <View style={styles.modalContainer}>
-                <Animated.View
-                  style={[
-                    styles.modalView,
-                    { transform: [{ translateY: slideAnim }] },
-                  ]}>
-                  <Text style={styles.modalText}>
-                    You do not currently have admin privileges
+              data={fontSizes}
+              defaultValue={`${fontSize}`}
+              onSelect={(selectedItem: number) => saveFontSize(selectedItem)}
+              renderButton={(selectedItem: number) => (
+                <View style={styles.dropdownButton}>
+                  <Text style={styles.buttonText}>
+                    {selectedItem || fontSize}
                   </Text>
-                  <Pressable style={styles.closeButton} onPress={slideDown}>
-                    <Text style={styles.feedbackButtonText}>Close</Text>
-                  </Pressable>
-                  <Pressable
-                    style={styles.getAdminAccessButton}
-                    onPress={()=>navigation.navigate("AdminForm")}>
-                    <Text style={styles.feedbackButtonText}>
-                      Get Admin Access
-                    </Text>
-                  </Pressable>
-                </Animated.View>
-              </View>
-            </Modal>
-          </SafeAreaView>
+                  <MaterialCommunityIcons
+                    name="chevron-down"
+                    size={20}
+                    style={styles.buttonIcon}
+                  />
+                </View>
+              )}
+              renderItem={(item) => (
+                <View style={styles.dropdownItem}>
+                  <Text style={styles.itemText}>{item.toString()}</Text>
+                </View>
+              )}
+              dropdownStyle={styles.dropdownStyle}
+            />
+          </View>
         </View>
+        <View style={styles.option}>
+          <Text style={styles.text}>Profile</Text>
+          <Pressable
+            style={styles.profileViewButton}
+            onPress={async () => {
+              const userId = await fetchUserIdFromAPI();
+              if (userId) {
+                navigation.navigate('Profile', { _id: userId });
+              } else {
+                console.log('User ID not found');
+              }
+            }}>
+            <Text style={styles.profileViewText}>View</Text>
+          </Pressable>
+        </View>
+        <View style={styles.option}>
+          <Text style={styles.text}>Logout</Text>
+          <Pressable onPress={logOut} style={styles.logoutButton}>
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </Pressable>
+        </View>
+      </View>
+      <View>
+        <Pressable
+          style={styles.feedbackButton}
+          onPress={() => navigation.navigate('Feedback')}>
+          <Text style={styles.feedbackButtonText}>Feedback</Text>
+        </Pressable>
+      </View>
+      <View>
+        <Pressable
+          style={styles.adminButton}
+          onPress={() => {
+            handleAdminAccess();
+          }}>
+          <Text style={styles.adminButtonText}>Admin</Text>
+        </Pressable>
+        <SafeAreaView>
+          <Modal visible={showModal} transparent>
+            <View style={styles.modalContainer}>
+              <Animated.View
+                style={[
+                  styles.modalView,
+                  { transform: [{ translateY: slideAnim }] },
+                ]}>
+                <Text style={styles.modalText}>
+                  You do not currently have admin privileges
+                </Text>
+                <Pressable style={styles.closeButton} onPress={slideDown}>
+                  <Text style={styles.feedbackButtonText}>Close</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.getAdminAccessButton}
+                  onPress={() => navigation.navigate("AdminForm")}>
+                  <Text style={styles.feedbackButtonText}>
+                    Get Admin Access
+                  </Text>
+                </Pressable>
+              </Animated.View>
+            </View>
+          </Modal>
+        </SafeAreaView>
       </View>
     </SafeAreaView>
   );
@@ -347,24 +322,23 @@ const styling = (theme: ThemeType, fontSize: number) =>
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
     },
-    feedbackButton:{
-    
-        backgroundColor: colors.purple,
-        padding: 10,
-        paddingLeft: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
+    feedbackButton: {
+      backgroundColor: colors.purple,
+      padding: 10,
+      paddingLeft: 10,
+      borderRadius: 5,
+      marginBottom: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 20,
     },
-    feedbackButtonText:{
+    feedbackButtonText: {
       color: colors.white,
       fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
     },
-    adminButton:{
+    adminButton: {
       backgroundColor: colors.red,
       padding: 10,
       paddingLeft: 10,
@@ -374,51 +348,51 @@ const styling = (theme: ThemeType, fontSize: number) =>
       alignItems: 'center',
       marginTop: 20,
     },
-    adminButtonText:{
+    adminButtonText: {
       color: colors.white,
       fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
     },
-     modalContainer: {
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        },
-        modalView: {
-          margin: 20,
-          backgroundColor: Colors[theme]?.backgroundColor,
-          borderRadius: 20,
-          padding: 35,
-          alignItems: 'center',
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          elevation: 5,
-  },
-   modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
-        color: Colors[theme]?.textColor,
-        fontFamily:"Lato-Italic"
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: Colors[theme]?.backgroundColor,
+      borderRadius: 20,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
       },
-    closeButton:{
-      backgroundColor:colors.red,
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: 'center',
+      color: Colors[theme]?.textColor,
+      fontFamily: "Lato-Italic",
+    },
+    closeButton: {
+      backgroundColor: colors.red,
       padding: 10,
       width: 160,
       borderRadius: 8,
       marginTop: 25,
     },
-  getAdminAccessButton:{
-    backgroundColor:colors.purple,
-    padding: 10,
-    width: 160,
-    borderRadius: 8,
-    marginTop: 25,
-  },
-})
+    getAdminAccessButton: {
+      backgroundColor: colors.purple,
+      padding: 10,
+      width: 160,
+      borderRadius: 8,
+      marginTop: 25,
+    },
+  });

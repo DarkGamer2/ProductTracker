@@ -6,9 +6,9 @@ import { useTheme } from '../context/theme/ThemeContext';
 type ThemeType = keyof typeof Colors;
 
 const Item = (props: any) => {
-  const { theme } = useTheme();
+  const { theme,fontSize } = useTheme();
 
-  const styles = styling(theme);
+  const styles = styling(theme,fontSize);
   return (
     <View style={styles.container}>
       <Image source={{ uri: props.image }} style={styles.itemImage} />
@@ -22,7 +22,7 @@ const Item = (props: any) => {
 
 export default Item;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
@@ -39,13 +39,13 @@ const styling = (theme: ThemeType) =>
     // },
     itemTitle: {
       fontFamily: 'Roboto-Regular',
-      fontSize: 16,
+      fontSize: fontSize,
       fontWeight: 'bold',
       marginRight: 10,
       color: Colors[theme]?.textColor,
     },
     price: {
-      fontSize: 14,
+      fontSize: fontSize,
       color: Colors[theme]?.textColor,
       marginTop: 5,
       fontFamily: 'Lato-Italic',

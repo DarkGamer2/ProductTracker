@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   Animated,
+  SafeAreaView
 } from 'react-native';
 import React from 'react';
 import { colors } from '../constants/colors';
@@ -30,7 +31,7 @@ const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-  const { theme } = useTheme();
+  const { theme,fontSize } = useTheme();
 
   const animationValue = useRef(new Animated.Value(1)).current;
 
@@ -102,10 +103,11 @@ const AddProduct = () => {
     }
   };
 
-  const formStyles = styling(theme);
+  const formStyles = styling(theme,fontSize);
   return (
-    <ScrollView style={formStyles.container}>
-      <View>
+    <SafeAreaView style={formStyles.container}>
+     <ScrollView>
+     <View>
         <Text style={formStyles.screenTitle}>Add Product</Text>
       </View>
       <View>
@@ -160,13 +162,14 @@ const AddProduct = () => {
        </View>
         {error ? <Text style={formStyles.errorText}>{error}</Text> : null}
       </View>
-    </ScrollView>
+     </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default AddProduct;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -186,14 +189,14 @@ const styling = (theme: ThemeType) =>
     },
     addButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 1,
     },
     formTitle: {
       textAlign: 'center',
-      fontSize: 20,
+      fontSize: fontSize,
       fontFamily: 'Lato-Italic',
       margin: 30,
       color: colors.darkGrayAlt2,
@@ -207,7 +210,7 @@ const styling = (theme: ThemeType) =>
     },
     screenTitle: {
       textAlign: 'center',
-      fontSize: 35,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       margin: 20,
       color: colors.purple,
@@ -216,6 +219,7 @@ const styling = (theme: ThemeType) =>
       textAlign: 'center',
       color: 'red',
       marginTop: 10,
+      fontSize: fontSize,
     },
     imagePickerButton: {
       padding: 10,
@@ -227,7 +231,8 @@ const styling = (theme: ThemeType) =>
     imagePickerButtonText: {
       color: colors.white,
       textAlign: 'center',
-      fontFamily: 'BebasNeue-Regular'
+      fontFamily: 'BebasNeue-Regular',
+      fontSize: fontSize,
     },
     imagePreview: {
       width: 100,

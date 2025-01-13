@@ -14,7 +14,7 @@ import {useTheme} from '../context/theme/ThemeContext';
 
 type ThemeType = keyof typeof Colors;
 const AddCustomer = ({navigation}: any) => {
-  const {theme} = useTheme();
+  const {theme,fontSize} = useTheme();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -51,7 +51,7 @@ const AddCustomer = ({navigation}: any) => {
     }
   };
 
-  const customerStyles = styling(theme);
+  const customerStyles = styling(theme,fontSize);
   return (
     <SafeAreaView style={customerStyles.container}>
       <Text style={customerStyles.appTitle}>Add A Customer</Text>
@@ -101,7 +101,7 @@ const AddCustomer = ({navigation}: any) => {
 
 export default AddCustomer;
 
-const styling = (theme: ThemeType) =>
+const styling = (theme: ThemeType,fontSize:any) =>
   StyleSheet.create({
     container: {
       padding: 20,
@@ -109,7 +109,7 @@ const styling = (theme: ThemeType) =>
       backgroundColor: Colors[theme]?.backgroundColor,
     },
     label: {
-      fontSize: 16,
+      fontSize: fontSize,
       marginBottom: 10,
       color: Colors[theme]?.textColor,
       textAlign: 'center',
@@ -133,7 +133,7 @@ const styling = (theme: ThemeType) =>
     },
     addCustomerButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
@@ -147,14 +147,14 @@ const styling = (theme: ThemeType) =>
     },
     goBackButtonText: {
       textAlign: 'center',
-      fontSize: 15,
+      fontSize: fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
     appTitle: {
       textAlign: 'center',
-      fontSize: 35,
+      fontSize: fontSize,
       fontFamily: 'BebasNeue-Regular',
       margin: 20,
       color: colors.purple,
