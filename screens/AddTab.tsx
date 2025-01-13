@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  SafeAreaView
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useTheme} from '../context/theme/ThemeContext';
@@ -189,7 +190,7 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
   const tabStyles = styling(theme);
 
   return (
-    <ScrollView style={tabStyles.container}>
+    <SafeAreaView style={tabStyles.container}>
       <View>
         <Text style={tabStyles.appTitle}>Tab Creation</Text>
       </View>
@@ -300,7 +301,7 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
           </View>
         )}
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -402,6 +403,7 @@ const styling = (theme: ThemeType) =>
       width: 160,
       borderRadius: 8,
       marginTop: 25,
+      textAlign: 'center'
     },
     goBackButtonText: {
       textAlign: 'center',

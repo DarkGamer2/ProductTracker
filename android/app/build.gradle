@@ -20,8 +20,8 @@ android {
         applicationId "com.producttracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.4.1"
+        versionCode 8
+        versionName "1.4.2"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
 

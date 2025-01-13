@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,106 +9,65 @@ import {
   Pressable,
   ActivityIndicator,
   Animated,
-  Alert
+  Alert,
 } from 'react-native';
 import { colors } from '../constants/colors';
 import PTLogo from '../assets/images/ProductTrackerIcon.png';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
-import { NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 type ThemeType = keyof typeof Colors;
 
 type Props = {
   navigation: NavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
 };
 
 const Register = ({ navigation }: Props) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [mobileNumber,setMobileNumber]=useState("")
-  const [buttonText, setButtonText] = useState('Register');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [registerSuccessful,setRegisterSuccessful]=useState(true);
-  const [barAnimation] = useState([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]);
+  const [buttonState, setButtonState] = useState<'normal' | 'success' | 'error'>('normal');
+  const animationValue = useRef(new Animated.Value(1)).current;
   const { theme } = useTheme();
 
   const registerStyles = styling(theme);
 
-  const calculatePasswordStrength = (password: string) => {
-    if (password.length === 0) return 0;
-    if (password.length < 6) return 1;
-    if (password.match(/[A-Za-z]/) && password.match(/[0-9]/)) return 2;
-    if (password.length >= 8 && password.match(/[!@#$%^&*]/)) return 3;
-    return 2;
-  };
-
-  const passwordStrength = calculatePasswordStrength(password);
-
-  useEffect(() => {
-    barAnimation.forEach((animatedValue, index) => {
-      Animated.timing(animatedValue, {
-        toValue: index < passwordStrength ? 1 : 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-    });
-  }, [passwordStrength, barAnimation]);
-
   const handleRegister = async () => {
     setIsLoading(true);
-    setButtonText('Loading...');
+    setButtonState('normal');
+    animateButton();
+
     try {
-        const response = await fetch(
-            'https://product-tracker-api-production.up.railway.app/api/register',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                    email: email,
-                    mobileNumber: mobileNumber
-                }),
-            }
-        );
+      const response = await fetch('https://product-tracker-api-production.up.railway.app/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, email, mobileNumber }),
+      });
 
-        // Log the raw response for debugging
-        const responseText = await response.text();  // Get the raw text
-        console.log('Raw Response:', responseText);
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
 
-        if (!response.ok) {
-            // If response is not OK, handle it here
-            const errorData = responseText ? JSON.parse(responseText) : {};
-            throw new Error(errorData.error || "Something went wrong during registration.");
-        }
-
-        // Now parse the response as JSON
-        const data = JSON.parse(responseText);  // Parse the raw text into JSON
-
-        Alert.alert('Registration Successful', data.message || "You have successfully registered!");
-        setRegisterSuccessful(true);
-        setButtonText('Register');
-        setIsLoading(false);
-
+      const data = await response.json();
+      Alert.alert('Success', data.message || 'Registration successful!');
+      setButtonState('success');
     } catch (error:any) {
-        console.error("Registration failed:", error.message);
-        Alert.alert('Registration Failed', error.message || 'Something went wrong. Please try again.');
-        setButtonText('Register');
-        setIsLoading(false);
+      Alert.alert('Error', error.message || 'Something went wrong!');
+      setButtonState('error');
+    } finally {
+      setIsLoading(false);
     }
-};
+  };
 
-  const goBack = () => {
-    navigation.navigate('Login');
+  const animateButton = () => {
+    Animated.sequence([
+      Animated.timing(animationValue, { toValue: 1.1, duration: 300, useNativeDriver: true }),
+      Animated.timing(animationValue, { toValue: 1, duration: 300, useNativeDriver: true }),
+    ]).start();
   };
 
   return (
@@ -118,65 +77,64 @@ const Register = ({ navigation }: Props) => {
         <Text style={registerStyles.appTitle}>Create your account</Text>
       </View>
       <View style={registerStyles.centered}>
-        <Text style={registerStyles.label}>Email: </Text>
+      <Text style={registerStyles.label}>Email: </Text>
         <TextInput
           style={registerStyles.inputField}
-          onChangeText={(newEmail) => setEmail(newEmail)}
+          placeholder="Email"
+          onChangeText={setEmail}
           value={email}
         />
-        <Text style={registerStyles.label}>Mobile Number</Text>
-        <TextInput style={registerStyles.inputField} onChangeText={(newMobileNumber)=>setMobileNumber(newMobileNumber)} value={mobileNumber}/>
+           <Text style={registerStyles.label}>Mobile Number</Text>
+        <TextInput
+          style={registerStyles.inputField}
+          placeholder="Mobile Number"
+          onChangeText={setMobileNumber}
+          value={mobileNumber}
+        />
         <Text style={registerStyles.label}>Username: </Text>
         <TextInput
           style={registerStyles.inputField}
-          onChangeText={(newUsername) => setUsername(newUsername)}
+          placeholder="Username"
+          onChangeText={setUsername}
           value={username}
         />
-        <Text style={registerStyles.label}>Password: </Text>
+         <Text style={registerStyles.label}>Password: </Text>
         <TextInput
           style={registerStyles.inputField}
-          onChangeText={(newPassword) => setPassword(newPassword)}
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={setPassword}
           value={password}
-          secureTextEntry={true}
         />
-        {password.length > 0 && (
-          <View style={registerStyles.strengthIndicator}>
-            {barAnimation.map((animatedValue, index) => (
-              <Animated.View
-                key={index}
-                style={[
-                  registerStyles.strengthBar,
-                  index === 0 ? registerStyles.weak : index === 1 ? registerStyles.medium : registerStyles.strong,
-                  {
-                    opacity: animatedValue,
-                  },
-                ]}
-              />
-            ))}
-          </View>
-        )}
       </View>
       <View style={registerStyles.centered}>
-        <Pressable
-          style={registerStyles.loginButton}
-          onPress={handleRegister}
-          disabled={isLoading}
+        <Animated.View
+          style={[
+            registerStyles.loginButton,
+            { transform: [{ scale: animationValue }] },
+            buttonState === 'success' && { backgroundColor: colors.green },
+            buttonState === 'error' && { backgroundColor: colors.red },
+          ]}
         >
-          {isLoading ? (
-            <ActivityIndicator size="small" color={colors.white} />
-          ) : (
-            <Text style={registerStyles.loginButtonText}>{buttonText}</Text>
-          )}
-        </Pressable>
-        <Pressable style={registerStyles.backButton} onPress={goBack}>
+          <Pressable onPress={handleRegister} disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color={colors.white} />
+            ) : buttonState === 'success' ? (
+              <Icon name="checkmark-circle" size={20} color={colors.white} />
+            ) : buttonState === 'error' ? (
+              <Icon name="alert-circle-outline" size={20} color={colors.white} />
+            ) : (
+              <Text style={registerStyles.loginButtonText}>Register</Text>
+            )}
+          </Pressable>
+        </Animated.View>
+        <Pressable style={registerStyles.backButton} onPress={() => navigation.navigate('Login')}>
           <Text style={registerStyles.backButtonText}>Go Back</Text>
         </Pressable>
       </View>
     </ScrollView>
   );
 };
-
-export default Register;
 
 const styling = (theme: ThemeType) =>
   StyleSheet.create({
@@ -201,6 +159,9 @@ const styling = (theme: ThemeType) =>
       width: 160,
       borderRadius: 8,
       marginTop: 25,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center', // Center content vertically
     },
     loginButtonText: {
       textAlign: 'center',
@@ -265,3 +226,5 @@ const styling = (theme: ThemeType) =>
       marginTop: 25,
     },
   });
+
+export default Register;

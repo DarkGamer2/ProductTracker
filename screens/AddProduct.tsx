@@ -73,7 +73,7 @@ const AddProduct = () => {
       ])
     ).start();
     setButtonText('Adding Product...');
-    setButtonColor('#00c438');
+    setButtonColor(`${colors.green}`);
   
     try {
       const API_URL = 'https://product-tracker-api-production.up.railway.app';

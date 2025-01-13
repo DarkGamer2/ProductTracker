@@ -230,7 +230,7 @@ const Settings = ({ navigation,route }: { navigation: NavigationProp<any, any>, 
                   </Pressable>
                   <Pressable
                     style={styles.getAdminAccessButton}
-                    onPress={slideDown}>
+                    onPress={()=>navigation.navigate("AdminForm")}>
                     <Text style={styles.feedbackButtonText}>
                       Get Admin Access
                     </Text>
