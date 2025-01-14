@@ -15,11 +15,13 @@ import Colors from '../context/theme/Colors';
 import {items} from '../data/items';
 import {colors} from '../constants/colors';
 import {Customer, TabItem} from '../types';
+import { useFont } from '../context/fontContext';
 
 type ThemeType = keyof typeof Colors;
 
 const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) => {
-  const {theme,fontSize} = useTheme();
+  const {theme} = useTheme();
+  const {fontSize}=useFont();
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [tabItems, setTabItems] = useState<TabItem[]>([]);
   const [dropdownValue, setDropdownValue] = useState<string | null>(null);

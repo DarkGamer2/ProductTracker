@@ -11,10 +11,12 @@ import {
 import {colors} from '../constants/colors';
 import Colors from '../context/theme/Colors';
 import {useTheme} from '../context/theme/ThemeContext';
+import { useFont } from '../context/fontContext';
 
 type ThemeType = keyof typeof Colors;
 const AddCustomer = ({navigation}: any) => {
-  const {theme,fontSize} = useTheme();
+  const {theme} = useTheme();
+  const {fontSize}=useFont();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');

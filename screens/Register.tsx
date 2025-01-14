@@ -17,7 +17,7 @@ import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import { useFont } from '../context/fontContext';
 type ThemeType = keyof typeof Colors;
 
 type Props = {
@@ -32,7 +32,8 @@ const Register = ({ navigation }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [buttonState, setButtonState] = useState<'normal' | 'success' | 'error'>('normal');
   const animationValue = useRef(new Animated.Value(1)).current;
-  const { theme,fontSize } = useTheme();
+  const { theme } = useTheme();
+  const {fontSize } = useFont();
 
   const registerStyles = styling(theme,fontSize);
 

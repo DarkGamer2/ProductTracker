@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../context/theme/ThemeContext';
+import { useFont } from '../context/fontContext'; // Import the FontContext hook
 import Colors from '../context/theme/Colors';
 import { useState } from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -16,7 +17,8 @@ const Settings = ({ navigation, route }: { navigation: NavigationProp<any, any>,
   const [adminAccess, setAdminAccess] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const slideAnim = useRef(new Animated.Value(300)).current; // Default off-screen position
-  const { theme, setTheme, fontSize, updateFontSize } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const { fontSize, updateFontSize } = useFont(); // Access font size from context
   const { userId } = route.params || {};
   const fontSizes = [12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
 
@@ -233,7 +235,7 @@ const styling = (theme: ThemeType, fontSize: number) =>
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: Colors[theme]?.themeColor,
+     
     },
     separator: {
       borderBottomWidth: 1,
@@ -263,6 +265,7 @@ const styling = (theme: ThemeType, fontSize: number) =>
     },
     safeView: {
       flex: 1,
+      backgroundColor:Colors[theme]?.themeColor
     },
     dropdownButton: {
       flexDirection: 'row',
@@ -331,6 +334,9 @@ const styling = (theme: ThemeType, fontSize: number) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 20,
+      width: 200,
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
     feedbackButtonText: {
       color: colors.white,
@@ -343,10 +349,12 @@ const styling = (theme: ThemeType, fontSize: number) =>
       padding: 10,
       paddingLeft: 10,
       borderRadius: 5,
-      marginBottom: 10,
+      marginBottom: 120,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 20,
+      width: 200,
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
     adminButtonText: {
       color: colors.white,
@@ -396,3 +404,4 @@ const styling = (theme: ThemeType, fontSize: number) =>
       marginTop: 25,
     },
   });
+

@@ -19,6 +19,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import {useTheme} from '../context/theme/ThemeContext';
+import { useFont } from '../context/fontContext';
 
 type Props = {
   navigation: NavigationProp<ParamListBase>;
@@ -34,7 +35,8 @@ const Login = ({navigation}: Props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const {theme,fontSize} = useTheme();
+  const {theme} = useTheme();
+  const {fontSize}=useFont();
 
   const handleLogin = async () => {
     try {

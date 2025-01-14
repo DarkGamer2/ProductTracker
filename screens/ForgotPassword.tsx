@@ -18,7 +18,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import { useFont } from '../context/fontContext';
 type Props = {
   navigation: NavigationProp<ParamListBase>;
   route: RouteProp<ParamListBase>;
@@ -34,7 +34,8 @@ const ForgotPassword = ({ navigation }: Props) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [buttonState, setButtonState] = useState<'normal' | 'success' | 'error'>('normal');
-  const { theme,fontSize } = useTheme();
+  const { theme} = useTheme();
+  const {fontSize}=useFont();
   const forgotStyles = styling(theme,fontSize);
   const animationValue = useRef(new Animated.Value(1)).current;
 
@@ -186,7 +187,7 @@ const ForgotPassword = ({ navigation }: Props) => {
 
 export default ForgotPassword;
 
-const styling = (theme: ThemeType,fontSize:any) =>
+const styling = (theme: ThemeType,fontSize:number) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,

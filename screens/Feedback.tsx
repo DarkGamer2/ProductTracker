@@ -18,7 +18,7 @@ import {
   ParamListBase,
   RouteProp,
 } from '@react-navigation/native';
-
+import { useFont } from '../context/fontContext';
 type ThemeType = keyof typeof Colors;
 
 type Props = {
@@ -36,7 +36,8 @@ const Feedback = ({ navigation }: Props) => {
 
   const animationValue = useRef(new Animated.Value(1)).current; // For button animation
 
-  const { theme,fontSize } = useTheme();
+  const { theme} = useTheme();
+  const {fontSize}=useFont();
   const feedbackStyles = styling(theme,fontSize);
 
   const handleSubmitFeedback = () => {

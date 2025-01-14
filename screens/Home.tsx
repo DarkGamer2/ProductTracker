@@ -18,7 +18,7 @@ import Item from '../components/Item';
 import { colors } from '../constants/colors';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
-
+import { useFont } from '../context/fontContext';
 type ThemeType = keyof typeof Colors;
 
 interface Product {
@@ -29,7 +29,8 @@ interface Product {
 }
 
 const Home = ({ route, navigation }: any) => {
-  const { theme,fontSize } = useTheme();
+  const { theme } = useTheme();
+  const {fontSize } = useFont();
   const username = route && route.params && route.params.username;
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);

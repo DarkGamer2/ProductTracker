@@ -4,6 +4,7 @@ import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 import { colors } from '../constants/colors';
 import { NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native';
+import { useFont } from '../context/fontContext';
 
 type ThemeType = keyof typeof Colors;
 type Props = {
@@ -12,8 +13,9 @@ type Props = {
 };
 
 const AdminForm = ({ navigation }: Props) => {
-  const { theme ,fontSize} = useTheme(); // Use `theme` from context
-  const styles = styling(theme, fontSize); // Generate styles dynamically
+  const { theme} = useTheme(); // Use `theme` from context
+  const {fontSize}=useFont();
+  const styles = styling(theme,fontSize); // Generate styles dynamically
   const [adminStatus, setAdminStatus] = useState(false);
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -146,7 +148,7 @@ const AdminForm = ({ navigation }: Props) => {
 
 export default AdminForm;
 
-const styling = (theme: ThemeType, fontSize: number) => {
+const styling = (theme: ThemeType,fontSize:number) => {
   return StyleSheet.create({
     container: {
       flexGrow: 1,

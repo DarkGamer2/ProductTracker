@@ -18,6 +18,7 @@ import Colors from '../context/theme/Colors';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNFS from 'react-native-fs';
+import { useFont } from '../context/fontContext';
 
 type ThemeType = keyof typeof Colors;
 
@@ -31,8 +32,8 @@ const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-  const { theme,fontSize } = useTheme();
-
+  const { theme } = useTheme();
+  const {fontSize}=useFont();
   const animationValue = useRef(new Animated.Value(1)).current;
 
   const Product = { productName, productDescription, productPrice, productImage };

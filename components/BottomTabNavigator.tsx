@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
 import AddProduct from '../screens/AddProduct';
@@ -8,15 +8,31 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Scanner from '../screens/Scanner';
 import {colors} from '../constants/colors';
+import { useTheme } from '../context/theme/ThemeContext';  // Import ThemeContext
+import { useFont } from '../context/fontContext';  // Import FontContext
 
-const BottomTabNavigator = ({user}:any) => {
+const BottomTabNavigator = ({user}: any) => {
   const Tab = createBottomTabNavigator();
+
+  // Access the current theme and font size from the contexts
+  const { theme } = useTheme();
+  const { fontSize } = useFont();
+
+  // Apply dynamic styling based on the current theme and font size
+  const navStyles = StyleSheet.create({
+    label: {
+      fontSize: fontSize, // Apply font size dynamically
+      fontFamily: 'BebasNeue-Regular',  // You can change this based on the theme or context
+      color: theme === 'dark' ? colors.white : colors.black,  // Adjust color based on theme
+    },
+  });
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: colors.purple,
-        tabBarInactiveTintColor: colors.purple,
+        tabBarActiveTintColor: theme === 'dark' ? colors.purple : colors.purple, // Active icon color based on theme
+        tabBarInactiveTintColor: theme === 'dark' ? colors.darkGray : colors.purple, // Inactive icon color based on theme
         headerShown: false,
       }}>
       <Tab.Screen
@@ -52,9 +68,9 @@ const BottomTabNavigator = ({user}:any) => {
           ),
         }}
       />
-      <Tab.Screen
+       <Tab.Screen
         name="Settings"
-        component={Settings}
+        component={Settings as React.ComponentType<any>}
         options={{
           tabBarLabel: 'Settings',
           tabBarLabelStyle: navStyles.label,
@@ -68,9 +84,3 @@ const BottomTabNavigator = ({user}:any) => {
 };
 
 export default BottomTabNavigator;
-
-const navStyles = StyleSheet.create({
-  label: {
-    fontSize: 12,
-  },
-});

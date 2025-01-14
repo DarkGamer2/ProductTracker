@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, Modal, StyleSheet } from 'react-native';
+import { View, Text, Button, Modal, StyleSheet,SafeAreaView } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Colors from '../context/theme/Colors';
 import { useTheme } from '../context/theme/ThemeContext';
@@ -62,7 +62,7 @@ const Scanner = () => {
   };
 
   return (
-    <View style={scannerStyles.container}>
+    <SafeAreaView style={scannerStyles.container}>
       {/* Your scanner component and logic here */}
       <RNCamera
         style={scannerStyles.camera}
@@ -86,7 +86,7 @@ const Scanner = () => {
           <Button title="No" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -9,6 +9,7 @@ import {
   DefaultTheme,
 } from '@react-navigation/native';
 import StackNavigator from './components/StackNavigator';
+import { FontProvider } from './context/fontContext';
 
 const AppContent = () => {
   const appearance = useColorScheme();
@@ -20,9 +21,10 @@ const AppContent = () => {
       save('Theme', appearance);
       save('IsDefault', true);
       save('IS_FIRST', true);
-      setTheme(appearance); // Set the initial theme
+      setTheme(appearance === 'dark' ? 'dark' : 'light'); // Ensure 'light' or 'dark' is passed
     }
   }, [appearance, setTheme]);
+  
 
   useEffect(() => {
     setAppTheme();
@@ -36,9 +38,11 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <ThemeProvider>
+ <FontProvider>
+   <ThemeProvider>
     <AppContent />
   </ThemeProvider>
+ </FontProvider>
 );
 
 export default App;
