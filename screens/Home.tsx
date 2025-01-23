@@ -1,17 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Pressable,
-  Modal,
-  Dimensions,
-  Image,
-  Alert,
-  ActivityIndicator,
-SafeAreaView
-} from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, FlatList, Pressable, Modal, Dimensions, Image, Alert, ActivityIndicator, SafeAreaView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Item from '../components/Item';
@@ -19,6 +7,7 @@ import { colors } from '../constants/colors';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 import { useFont } from '../context/fontContext';
+
 type ThemeType = keyof typeof Colors;
 
 interface Product {
@@ -30,48 +19,46 @@ interface Product {
 
 const Home = ({ route, navigation }: any) => {
   const { theme } = useTheme();
-  const {fontSize } = useFont();
-  const username = route && route.params && route.params.username;
+  const { fontSize } = useFont();
+  const username = route?.params?.username;
+  
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Function to fetch products from the API
-  const fetchProducts = async () => {
+  
+  // Debounced fetch function
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('https://product-tracker-api-production.up.railway.app/api/products');
       const data = await response.json();
       setProducts(data);
-      setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching products:', error);
+      Alert.alert('Error', 'Failed to load products.');
+    } finally {
       setLoading(false);
     }
-  };
-
+  }, []);
+  
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
-  // Function to render each product item in the grid
-  const renderGridItem = ({ item }: {item:Product}) => (
-    <View
-      style={[
-        styles.itemContainer,
-        { width: (Dimensions.get('window').width - 40) / 3 },
-      ]}>
+  // Render product item in the grid
+  const renderGridItem = ({ item }: { item: Product }) => (
+    <View style={[styles.itemContainer, { width: (Dimensions.get('window').width - 40) / 3 }]}>
       <Image source={{ uri: item.productImage }} style={styles.itemImage} />
-      <Text style={styles.productName}>{item.productName ||"Item"}</Text>
+      <Text style={styles.productName}>{item.productName || "Item"}</Text>
     </View>
   );
 
-  // Function to render each item in the modal
+  // Render product item in the modal
   const renderModalItem = ({ item }: { item: Product }) => (
     <Item title={item.productName} image={item.productImage} price={item.productPrice} />
   );
 
-  const styles = styling(theme,fontSize);
+  const styles = styling(theme, fontSize);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,55 +69,47 @@ const Home = ({ route, navigation }: any) => {
         Hello <Text style={styles.usernameText}>{username}</Text>
       </Text>
 
-      {/* Grid displaying the first 6 items */}
-    {loading ? (
-      <ActivityIndicator size="large" color={colors.purple} />
-    ) : products.length > 0 ? (
-      <FlatList
-        data={products.slice(0, 6)}
-        renderItem={renderGridItem}
-        keyExtractor={(product: Product) => product._id.toString()}
-        numColumns={3}
-        contentContainerStyle={styles.flatListContainer}
-      />
-    ) : (
-      <Text>No products To Display</Text>
-    )}
+      {/* Grid displaying the first 6 products */}
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.purple} />
+      ) : products.length > 0 ? (
+        <FlatList
+          data={products.slice(0, 6)}
+          renderItem={renderGridItem}
+          keyExtractor={(item: Product) => item._id.toString()}
+          numColumns={3}
+          contentContainerStyle={styles.flatListContainer}
+        />
+      ) : (
+        <Text>No products To Display</Text>
+      )}
 
-      <Pressable
-        style={styles.viewProductsButton}
-        onPress={() => setModalVisible(true)}>
+      <Pressable style={styles.viewProductsButton} onPress={() => setModalVisible(true)}>
         <Text style={styles.viewProductsButtonText}>View All Products</Text>
       </Pressable>
 
-      {/* Modal to display all products */}
+      {/* Modal for viewing all products */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(false);
-        }}>
+        onRequestClose={() => setModalVisible(false)}>
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>All Products</Text>
 
-            {/* Display loading indicator or products */}
             {loading ? (
               <ActivityIndicator size="large" color={colors.purple} />
             ) : (
               <FlatList
                 data={products}
                 renderItem={renderModalItem}
-                keyExtractor={(product: Product) => product._id.toString()}
+                keyExtractor={(item: Product) => item._id.toString()}
                 contentContainerStyle={styles.modalFlatListContainer}
               />
             )}
 
-            <Pressable
-              style={styles.buttonClose}
-              onPress={() => setModalVisible(false)}>
+            <Pressable style={styles.buttonClose} onPress={() => setModalVisible(false)}>
               <Text style={styles.textStyle}>
                 <MaterialCommunityIcons name="close" size={20} /> Close
               </Text>
@@ -139,17 +118,14 @@ const Home = ({ route, navigation }: any) => {
         </SafeAreaView>
       </Modal>
 
+      {/* Navigation buttons */}
       <View>
-        <Pressable
-          onPress={() => navigation.navigate('AddCustomer')}
-          style={styles.addCustomerButton}>
+        <Pressable onPress={() => navigation.navigate('AddCustomer')} style={styles.addCustomerButton}>
           <Text style={styles.addCustomerText}>Add Customer</Text>
         </Pressable>
       </View>
       <View>
-        <Pressable
-          style={styles.addTabButton}
-          onPress={() => navigation.navigate('AddTab')}>
+        <Pressable style={styles.addTabButton} onPress={() => navigation.navigate('AddTab')}>
           <Text style={styles.addTabButtonText}>
             <MaterialIcons name="add-circle-outline" size={20} /> Add A Tab
           </Text>
@@ -161,7 +137,7 @@ const Home = ({ route, navigation }: any) => {
 
 export default Home;
 
-const styling = (theme: ThemeType,fontSize:any) =>
+const styling = (theme: ThemeType, fontSize: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -170,13 +146,13 @@ const styling = (theme: ThemeType,fontSize:any) =>
     },
     welcomeText: {
       textAlign: 'center',
-      fontSize: fontSize,
+      fontSize,
       color: Colors[theme]?.textColor,
       fontFamily: 'BebasNeue-Regular',
       letterSpacing: 3,
     },
     appTitle: {
-      fontSize: fontSize,
+      fontSize,
       textAlign: 'center',
       marginTop: 35,
       fontFamily: 'BebasNeue-Regular',
@@ -195,9 +171,9 @@ const styling = (theme: ThemeType,fontSize:any) =>
       height: 100,
       marginBottom: 5,
     },
-    row: {
-      justifyContent: 'space-between', // Ensure spacing between the columns
-      marginBottom: 15, // Add space between rows
+    productName: {
+      color: Colors[theme]?.textColor,
+      fontSize,
     },
     viewProductsButton: {
       backgroundColor: colors.purple,
@@ -211,7 +187,7 @@ const styling = (theme: ThemeType,fontSize:any) =>
     viewProductsButtonText: {
       color: colors.white,
       textAlign: 'center',
-      fontSize: fontSize,
+      fontSize,
       fontFamily: 'BebasNeue-Regular',
     },
     modalContainer: {
@@ -232,15 +208,15 @@ const styling = (theme: ThemeType,fontSize:any) =>
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      width: '100%',
-      height: '100%',
+      width: '80%',
+      height: '80%',
     },
     modalText: {
       marginBottom: 15,
       textAlign: 'center',
       color: colors.purple,
       fontFamily: 'BebasNeue-Regular',
-      fontSize: fontSize,
+      fontSize,
     },
     modalFlatListContainer: {
       flexGrow: 2,
@@ -261,7 +237,7 @@ const styling = (theme: ThemeType,fontSize:any) =>
     },
     usernameText: {
       color: colors.purple,
-      fontSize:fontSize
+      fontSize,
     },
     addTabButton: {
       backgroundColor: colors.blue,
@@ -271,20 +247,17 @@ const styling = (theme: ThemeType,fontSize:any) =>
       marginLeft: 'auto',
       marginRight: 'auto',
       marginTop: 20,
+      marginBottom: 10,
     },
     addTabButtonText: {
       color: colors.white,
       textAlign: 'center',
-      fontSize: fontSize,
+      fontSize,
       fontFamily: 'BebasNeue-Regular',
-    },
-    productName: {
-      color: Colors[theme]?.textColor,
-      fontSize:fontSize
     },
     addCustomerText: {
       color: colors.white,
-      fontSize: fontSize,
+      fontSize,
       fontFamily: 'BebasNeue-Regular',
       textAlign: 'center',
     },
@@ -297,7 +270,5 @@ const styling = (theme: ThemeType,fontSize:any) =>
       marginRight: 'auto',
       marginTop: 20,
       marginBottom: 10,
-      fontSize: 15,
-      fontFamily: 'BebasNeue-Regular',
     },
   });

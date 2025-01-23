@@ -157,6 +157,7 @@ const AddTab: React.FC<{navigation: any; route: any}> = ({navigation, route}) =>
         } else {
           const error = await response.text();
           Alert.alert('Error', `Failed to save tab: ${error}`);
+          console.log(error);
         }
       } catch (error: any) {
         Alert.alert(

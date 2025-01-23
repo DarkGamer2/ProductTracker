@@ -1,3 +1,4 @@
+import React, {useState, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,197 +10,218 @@ import {
   Modal,
   SafeAreaView,
 } from 'react-native';
-import React, {useState} from 'react';
 import PTLogo from '../assets/images/ProductTrackerIcon.png';
 import {colors} from '../constants/colors';
 import Colors from '../context/theme/Colors';
-import {
-  NavigationProp,
-  ParamListBase,
-  RouteProp,
-} from '@react-navigation/native';
+import {NavigationProp, ParamListBase} from '@react-navigation/native';
 import {useTheme} from '../context/theme/ThemeContext';
-import { useFont } from '../context/fontContext';
+import {useFont} from '../context/fontContext';
 
 type Props = {
   navigation: NavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
 };
 
-type ThemeType = keyof typeof Colors;
+const API_URL = 'https://product-tracker-api-production.up.railway.app/api/login';
 
-const Login = ({navigation}: Props) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [buttonText, setButtonText] = useState('Login');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+const Login: React.FC<Props> = ({navigation}) => {
+  const [credentials, setCredentials] = useState({username: '', password: ''});
+  const [status, setStatus] = useState({
+    isLoading: false,
+    errorMessage: '',
+    modalVisible: false,
+  });
 
   const {theme} = useTheme();
-  const {fontSize}=useFont();
+  const {fontSize} = useFont();
 
-  const handleLogin = async () => {
+  // Combine static and dynamic styles
+  const dynamicStyles = getDynamicStyles(theme, fontSize);
+  const combinedStyles = {...staticStyles, ...dynamicStyles};
+
+  const handleChange = (field: keyof typeof credentials, value: string) => {
+    setCredentials(prev => ({...prev, [field]: value}));
+  };
+
+  const handleLogin = useCallback(async () => {
+    setStatus({isLoading: true, errorMessage: '', modalVisible: false});
+
     try {
-      const response = await fetch(`https://product-tracker-api-production.up.railway.app/api/login`, {
+      const response = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(credentials),
       });
-      setButtonText('Logging in...');
-
-      // Log response status and body
-      console.log('Response Status:', response.status);
-      const responseBody = await response.text();
-      console.log('Response Body:', responseBody);
 
       if (!response.ok) {
-        if (response.status === 401) {
-          setErrorMessage('Incorrect credentials');
-        } else if (response.status === 404) {
-          setErrorMessage('User does not exist');
-        } else {
-          setErrorMessage('An unknown error occurred');
-        }
-        setModalVisible(true);
-        throw new Error('Network response was not ok');
+        const errorMessages: Record<number, string> = {
+          401: 'Incorrect credentials',
+          404: 'User does not exist',
+        };
+        const errorMessage = errorMessages[response.status] || 'An unknown error occurred';
+        throw new Error(errorMessage);
       }
 
-      const data = JSON.parse(responseBody);
+      const data = await response.json();
 
-      // Check for error in response data
       if (data.error) {
-        setErrorMessage(data.error);
-        setModalVisible(true);
-        console.log('Login failed:', data.error);
-      } else {
-        navigation.navigate('BottomTabNavigator', {
-          screen: 'Home',
-          params: {username: username},
-        });
+        throw new Error(data.error);
       }
-    } catch (error) {
-      setErrorMessage('Network error occurred');
-      setModalVisible(true);
-      console.log('Error:', error);
+
+      navigation.navigate('BottomTabNavigator', {
+        screen: 'Home',
+        params: {username: credentials.username},
+      });
+    } catch (error: any) {
+      setStatus({
+        isLoading: false,
+        errorMessage: error.message || 'Network error occurred',
+        modalVisible: true,
+      });
     } finally {
-      setButtonText('Login');
+      setStatus(prev => ({...prev, isLoading: false}));
     }
-  };
+  }, [credentials, navigation]);
 
-  const handleRegisterNavigation = () => {
-    navigation.navigate('Register');
+  const handleNavigation = (screen: string) => {
+    navigation.navigate(screen);
   };
-
-  const handleForgotPassword = () => {
-    navigation.navigate('ForgotPassword');
-  };
-
-  const loginStyles = styling(theme,fontSize);
 
   return (
-    <ScrollView contentContainerStyle={loginStyles.container}>
-      <View style={loginStyles.centered}>
-        <Image style={loginStyles.PTLogoStyle} source={PTLogo} />
-        <Text style={loginStyles.appTitle}>Product Tracker</Text>
-      </View>
-      <View style={loginStyles.centered}>
-        <Text style={loginStyles.label}>Username: </Text>
-        <TextInput
-          style={loginStyles.inputField}
-          onChangeText={newUsername => setUsername(newUsername)}
-          value={username}
-        />
-        <Text style={loginStyles.label}>Password: </Text>
-        <TextInput
-          secureTextEntry={true}
-          style={loginStyles.inputField}
-          onChangeText={newPassword => setPassword(newPassword)}
-          value={password}
-        />
-      </View>
-      <View style={loginStyles.centered}>
-        <Pressable style={loginStyles.loginButton} onPress={handleLogin}>
-          <Text style={loginStyles.loginButtonText}>{buttonText}</Text>
-        </Pressable>
-      </View>
-      <View style={loginStyles.centered}>
-        <Pressable
-          style={loginStyles.registerButton}
-          onPress={handleRegisterNavigation}>
-          <Text style={loginStyles.registerButtonText}>Register</Text>
-        </Pressable>
-      </View>
-      <View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors[theme]?.themeColor }}> 
+      <ScrollView 
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} 
+      >
+        <View style={combinedStyles.centered}>
+          <Image style={combinedStyles.PTLogo} source={PTLogo} />
+          <Text style={combinedStyles.appTitle}>Product Tracker</Text>
+        </View>
+  
+        <View style={combinedStyles.centered}>
+          <Text style={combinedStyles.label}>Username:</Text>
+          <TextInput
+            style={combinedStyles.inputField}
+            value={credentials.username}
+            onChangeText={text => handleChange('username', text)}
+          />
+          <Text style={combinedStyles.label}>Password:</Text>
+          <TextInput
+            style={combinedStyles.inputField}
+            secureTextEntry
+            value={credentials.password}
+            onChangeText={text => handleChange('password', text)}
+          />
+        </View>
+  
+        <View style={combinedStyles.centered}>
+          <Pressable style={combinedStyles.button} onPress={handleLogin}>
+            <Text style={combinedStyles.buttonText}>
+              {status.isLoading ? 'Logging in...' : 'Login'}
+            </Text>
+          </Pressable>
+        </View>
+  
+        <View style={combinedStyles.centered}>
+          <Pressable 
+            style={combinedStyles.registerButton} 
+            onPress={() => handleNavigation('Register')}
+          >
+            <Text style={combinedStyles.registerButtonText}>Register</Text>
+          </Pressable>
+        </View>
+  
         <Text
-          style={loginStyles.forgotPasswordText}
-          onPress={handleForgotPassword}>
+          style={combinedStyles.forgotPasswordText}
+          onPress={() => handleNavigation('ForgotPassword')}
+        >
           Forgot Password?
         </Text>
-      </View>
-
-      <SafeAreaView>
+  
         <Modal
           animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
+          transparent
+          visible={status.modalVisible}
+          onRequestClose={() => setStatus(prev => ({...prev, modalVisible: false}))}
         >
-          <View style={loginStyles.modalContainer}>
-            <View style={loginStyles.modalView}>
-              <Text style={loginStyles.modalText}>{errorMessage}</Text>
+          <View style={combinedStyles.modalContainer}>
+            <View style={combinedStyles.modalView}>
+              <Text style={combinedStyles.modalText}>{status.errorMessage}</Text>
               <Pressable
-                style={[loginStyles.button, loginStyles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
+                style={combinedStyles.closeButton}
+                onPress={() => setStatus(prev => ({...prev, modalVisible: false}))}
               >
-                <Text style={loginStyles.textStyle}>Close</Text>
+                <Text style={combinedStyles.buttonText}>Close</Text>
               </Pressable>
             </View>
           </View>
         </Modal>
-      </SafeAreaView>
-    </ScrollView>
-  );
+      </ScrollView>
+    </SafeAreaView>
+  );  
 };
 
-export default Login;
+// Static styles for better autocomplete
+const staticStyles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  centered: {
+    alignItems: 'center',
+  },
+  PTLogo: {
+    width: 100,
+    height: 100,
+    marginVertical: 20,
+  },
+  appTitle: {
+    fontSize: 40,
+    fontFamily: 'BebasNeue-Regular',
+    color: colors.purple,
+    marginTop: 35,
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    textAlign: 'center',
+    fontFamily: 'Lato-Italic',
+    marginVertical: 20,
+    color: colors.purple,
+  },
+});
 
-const styling = (theme: ThemeType,fontSize:any) =>
+// Dynamic styles that depend on theme and fontSize
+const getDynamicStyles = (theme: keyof typeof Colors, fontSize: number) =>
   StyleSheet.create({
     container: {
-      flexGrow: 1,
-      justifyContent: 'center',
       backgroundColor: Colors[theme]?.backgroundColor,
+      
     },
-    centered: {
-      alignItems: 'center',
+    label: {
+      marginBottom: 10,
+      fontSize,
+      fontFamily: 'Lato-Italic',
+      color: Colors[theme]?.textColor,
     },
-    appTitle: {
-      fontSize: 40,
-      fontFamily: 'BebasNeue-Regular',
-      color: colors.purple,
-      marginTop: 35,
+    inputField: {
+      width: 200,
       marginBottom: 20,
+      borderRadius: 8,
+      padding: 8,
+      borderWidth: 1,
+      borderColor: colors.purple,
+      color: Colors[theme]?.textColor,
     },
-    loginButton: {
+    button: {
       backgroundColor: colors.purple,
       padding: 10,
       width: 160,
       borderRadius: 8,
       marginTop: 25,
     },
-    loginButtonText: {
+    buttonText: {
       textAlign: 'center',
-      fontSize: fontSize,
+      fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
-      letterSpacing: 3,
     },
     registerButton: {
       backgroundColor: colors.pink,
@@ -210,38 +232,9 @@ const styling = (theme: ThemeType,fontSize:any) =>
     },
     registerButtonText: {
       textAlign: 'center',
-      fontSize: fontSize,
+      fontSize,
       color: colors.white,
       fontFamily: 'BebasNeue-Regular',
-      letterSpacing: 3,
-    },
-    inputField: {
-      color: Colors[theme]?.textColor,
-      width: 200,
-      marginBottom: 20,
-      borderRadius: 8,
-      padding: 8,
-      borderWidth: 1,
-      borderColor: colors.purple,
-    },
-    label: {
-      marginBottom: 10,
-      fontSize: fontSize,
-      fontFamily: 'Lato-Italic',
-      color: Colors[theme]?.textColor,
-    },
-    PTLogoStyle: {
-      width: 100,
-      height: 100,
-      marginTop: 35,
-      marginBottom: 10,
-    },
-    forgotPasswordText: {
-      textAlign: 'center',
-      fontSize: fontSize,
-      color: colors.purple,
-      fontFamily: 'Lato-Italic',
-      margin: 20,
     },
     modalContainer: {
       flex: 1,
@@ -250,43 +243,29 @@ const styling = (theme: ThemeType,fontSize:any) =>
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalView: {
-      margin: 20,
       backgroundColor: Colors[theme]?.backgroundColor,
       borderRadius: 20,
       padding: 35,
       alignItems: 'center',
       shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
+      shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
     },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-    },
-    buttonClose: {
-      backgroundColor: colors.pink,
-      padding: 10,
-      width: 160,
-      borderRadius: 8,
-      marginTop: 25,
-    },
-    textStyle: {
-      color: 'white',
-      fontWeight: 'bold',
-      textAlign: 'center',
-      fontFamily:"BebasNeue-Regular"
-    },
     modalText: {
-      marginBottom: 15,
       textAlign: 'center',
       color: Colors[theme]?.textColor,
-      fontFamily:"Lato-Italic",
-      fontSize: fontSize,
+      fontFamily: 'Lato-Italic',
+      fontSize,
+      marginBottom: 15,
+    },
+    closeButton: {
+      backgroundColor: colors.pink,
+      padding: 10,
+      borderRadius: 8,
+      marginTop: 20,
     },
   });
+
+export default Login;

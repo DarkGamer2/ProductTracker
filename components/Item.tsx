@@ -2,12 +2,13 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import React from 'react';
 import Colors from '../context/theme/Colors';
 import { useTheme } from '../context/theme/ThemeContext';
+import { useFont } from '../context/fontContext';
 
 type ThemeType = keyof typeof Colors;
 
 const Item = (props: any) => {
-  const { theme,fontSize } = useTheme();
-
+  const { theme} = useTheme();
+  const {fontSize}=useFont();
   const styles = styling(theme,fontSize);
   return (
     <View style={styles.container}>
