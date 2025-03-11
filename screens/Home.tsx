@@ -7,7 +7,7 @@ import { colors } from '../constants/colors';
 import { useTheme } from '../context/theme/ThemeContext';
 import Colors from '../context/theme/Colors';
 import { useFont } from '../context/fontContext';
-
+import { useMemo } from 'react';
 type ThemeType = keyof typeof Colors;
 
 interface Product {
@@ -44,21 +44,21 @@ const Home = ({ route, navigation }: any) => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+  const styles = useMemo(()=>styling(theme, fontSize),[theme,fontSize]);
+  const displayedProducts = useMemo(() => products.slice(0, 6), [products]);
 
   // Render product item in the grid
-  const renderGridItem = ({ item }: { item: Product }) => (
+  const renderGridItem = useCallback(({ item }: { item: Product }) => (
     <View style={[styles.itemContainer, { width: (Dimensions.get('window').width - 40) / 3 }]}>
       <Image source={{ uri: item.productImage }} style={styles.itemImage} />
       <Text style={styles.productName}>{item.productName || "Item"}</Text>
     </View>
-  );
+  ), [styles]);
 
   // Render product item in the modal
-  const renderModalItem = ({ item }: { item: Product }) => (
+  const renderModalItem = useCallback(({ item }: { item: Product }) => (
     <Item title={item.productName} image={item.productImage} price={item.productPrice} />
-  );
-
-  const styles = styling(theme, fontSize);
+  ), []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -73,8 +73,9 @@ const Home = ({ route, navigation }: any) => {
       {loading ? (
         <ActivityIndicator size="large" color={colors.purple} />
       ) : products.length > 0 ? (
+        
         <FlatList
-          data={products.slice(0, 6)}
+          data={displayedProducts}
           renderItem={renderGridItem}
           keyExtractor={(item: Product) => item._id.toString()}
           numColumns={3}
